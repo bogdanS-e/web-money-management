@@ -9,8 +9,7 @@ import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 
 //import CheckAuth from '@/components/auth/CheckAuth';
 
-import vars from '@vars';
-import { theme } from '@/styles/theme';
+import theme from '@styles/theme';
 import { store } from '@/store';
 
 
@@ -25,8 +24,8 @@ const GlobalStyles = createGlobalStyle`
   }
 
   body {
-    color: ${vars.colors.black};
-    background-color: ${vars.colors.light_grey};
+    color: #000;
+    background-color: #fff;
   }
 
   .MuiTypography-root {
@@ -43,16 +42,14 @@ const App: React.FC<AppProps> = ({ Component, pageProps }) => {
 
   return (
     <Provider store={store}>
-      <ThemeProvider theme={theme}>
-        <MuiPickersUtilsProvider utils={DateFnsUtils}>
-          <StylesProvider injectFirst>
-            <CssBaseline />
-            <GlobalStyles />
-            {/* <CheckAuth /> */}
-            <Component {...pageProps} />
-          </StylesProvider>
-        </MuiPickersUtilsProvider>
-      </ThemeProvider>
+      <MuiPickersUtilsProvider utils={DateFnsUtils}>
+        <StylesProvider injectFirst>
+          <CssBaseline />
+          <GlobalStyles />
+          {/* <CheckAuth /> */}
+          <Component {...pageProps} />
+        </StylesProvider>
+      </MuiPickersUtilsProvider>
     </Provider>
   );
 };

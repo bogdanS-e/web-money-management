@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { Snackbar } from '@material-ui/core';
 import MuiAlert, { AlertProps, Color } from '@material-ui/lab/Alert';
 
-import { useToggle } from './hooks/useToggle';
+import useToggle  from './hooks/useToggle';
 
 const Alert: React.FC<AlertProps> = (props) => {
   return <MuiAlert elevation={6} variant='filled' {...props} />;
@@ -19,7 +19,7 @@ const ToastComponent: React.FC<Props> = ({ severity, text, node }) => {
   const [isOpen, close] = useToggle(true);
 
   const onClose = React.useCallback(() => {
-    close();
+    close.disable();
     ReactDOM.unmountComponentAtNode(node);
     node.remove();
   }, [close, node]);

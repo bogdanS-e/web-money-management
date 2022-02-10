@@ -1,22 +1,69 @@
-import { createMuiTheme } from '@material-ui/core/styles';
+const themeColors = {
+  production: '#DA3832',
+  development: '#1A73E8',
+  testing: '#689D6A',
+};
 
-import vars from '@vars';
+const theme = {
+  transitionDuration: {
+    short: '0.2s',
+    long: '0.5s',
+  },
+  colors: {
+    primary: themeColors[process.env.BUILD_ENV ?? 'production'],
+    blackBase: '#211E1C',
+    grey100: '#8C8B8A',
+    grey200: '#CECECE',
+    grey300: '#EDEDED',
+    grey400: '#FAFAFA',
+    whiteBase: '#FFFFFF',
+    whiteT50: 'rgba(255, 255, 255, 0.5)',
+    danger: '#F54C60',
+    dangerDark: '#DF495B',
+    dangerLight: '#F7A9B3',
+    success: '#68CEA8',
+    successDark: '#60BF9C',
+    successLight: '#B1E6D2',
+    warning: '#F6D97F',
+    warningDark: '#E4C86F',
+    warningLight: '#FBE7AA',
+    scrollBar: '#BABAC0',
 
-export const theme = createMuiTheme({
-  palette: {
-    primary: {
-      main: vars.colors.green,
-      contrastText: vars.colors.white,
-    },
-    secondary: {
-      main: vars.colors.black,
-    },
+    secondary: '#000000',
+    tertiary: '#FFFFFF',
+    background: '#E5E5E5',
+    transparentPrimary: 'rgba(224, 0, 27, 0.15)',
+    transparentSecondary: 'rgba(0, 0, 0, 0.1)',
+    transparentSecondary2: 'rgba(0, 0, 0, 0.2)',
+    transparentSecondary05: 'rgba(0, 0, 0, 0.05)',
+    transparentTertiary: 'rgba(255, 255, 255, 0.2)',
+    transparentBackground: 'rgba(229, 229, 229, 0.2)',
+    grey: '#e5e4eb',
+    purpleLight: '#9a97ac',
+    greyBackground: '#fefefe',
+    greyBorder: '#888888',
+    red: '#ec1730',
+    alertRed: '#FEF3F2',
+    alertWarning: '#FFFBEB',
+    alertSuccess: '#ECFDF5',
+    green: '#00c851',
+    blue: '#1a73e8',
+    redBackground: '#FFE3E7',
+    black: '#000000',
+    grey2: '#222222',
+    grey7: '#777777',
+    greyC: '#cccccc',
+    greyE: '#eeeeee',
+    greyF0: '#f0f0f0',
   },
-  overrides: {
-    MuiButton: {
-      root: {
-        textTransform: 'none',
-      },
-    },
+  font: '\'Inter\', sans-serif',
+  sizes: {
+    headerHeight: '70px',
   },
-});
+  screenWidth: {
+    tablet: 1024,
+    mobile: 480,
+  },
+};
+
+export default theme;

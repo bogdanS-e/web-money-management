@@ -1,6 +1,4 @@
-import { useRequest } from '@/utils/hooks';
 import React, { useEffect } from 'react';
-
 
 interface Props {}
 
@@ -13,8 +11,8 @@ const Home: React.FC<Props> = () => {
       console.log(resp);
       
     }
-    fetchUser();
-  }, []);
+    fetchUser();    
+  }, []);  
 
   return (
     <>

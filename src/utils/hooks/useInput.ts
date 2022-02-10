@@ -1,28 +1,23 @@
-import React, {
-  Dispatch,
-  DispatchWithoutAction,
-  ChangeEvent,
-  SetStateAction,
-} from 'react';
+import React, { useState } from 'react'
 
-type InputChngeEvent = ChangeEvent<HTMLInputElement | HTMLTextAreaElement>;
-
-export function useInput(
-  initialValue: string | (() => string),
-): [
+type UseInput = [
   string,
-  Dispatch<InputChngeEvent>,
-  Dispatch<SetStateAction<string>>,
-  DispatchWithoutAction,
-] {
-  const [value, setValue] = React.useState<string>(initialValue);
+  (input?: string | React.ChangeEvent<HTMLInputElement>) => void
+]
 
-  const setInput = React.useCallback(
-    (e: InputChngeEvent) => setValue(e.target.value),
-    [],
-  );
+const useInput = (initialValue: string): UseInput => {
+  const [value, setValue] = useState<string>(initialValue)
 
-  const clear = React.useCallback(() => setValue(''), []);
+  const setValueWrapper = (
+    input?: string | React.ChangeEvent<HTMLInputElement>
+  ) => {
+    if (input === undefined) setValue('')
 
-  return [value, setInput, setValue, clear];
+    if (typeof input === 'string') setValue(input)
+    else setValue((input as React.ChangeEvent<HTMLInputElement>).target.value)
+  }
+
+  return [value, setValueWrapper]
 }
+
+export default useInput

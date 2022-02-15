@@ -86,7 +86,6 @@
     "@types/styled-components": "^5.0.1",
     "@typescript-eslint/eslint-plugin": "^3.8.0",
     "babel-plugin-styled-components": "^1.10.7",
-    "dotenv": "^8.2.0",
     "eslint": "^7.6.0",
     "eslint-config-airbnb-typescript": "^9.0.0",
     "eslint-config-prettier": "^6.11.0",

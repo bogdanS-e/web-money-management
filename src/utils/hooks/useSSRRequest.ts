@@ -8,14 +8,14 @@ const useSSRRequest = async (req, res, url: string): Promise<Response> => {
   const refresh = cookies.get('refresh_token');
 
   try {
-    const resp = await fetch(`http://localhost:3000/api${url}`, {
+    const resp = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}${url}`, {
       headers: {
         Authorization: `${access}`,
       }
     });
 
     if (resp.status === 401) {
-      const refreshResp = await fetch(`http://localhost:3000/api/auth/refresh-token/?token=${refresh}`);
+      const refreshResp = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/refresh-token/?token=${refresh}`);
       
       if (refreshResp.status === 200) {
         const refreshJson: IUserTokens = await refreshResp.json();
@@ -23,7 +23,7 @@ const useSSRRequest = async (req, res, url: string): Promise<Response> => {
         cookies.set('access_token', refreshJson.accessToken, {httpOnly: false});
         cookies.set('refresh_token', refreshJson.refreshToken, {httpOnly: false});
 
-        return await fetch(`http://localhost:3000/api${url}`, {
+        return await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}${url}`, {
           headers: {
             Authorization: `${refreshJson.accessToken}`,
           }

@@ -27,10 +27,8 @@ const CheckAuth: React.FC<Props> = () => {
   })
 
   useEffect(() => {
-    if (isLoggedIn) return;
-    
     getUserRequest.fetch();
-  }, [isLoggedIn]);
+  }, []);
 
   return null;
 };

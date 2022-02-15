@@ -44,6 +44,10 @@ const App: React.FC<AppProps> = ({ Component, pageProps }) => {
     jssStyles?.parentElement?.removeChild(jssStyles);
   }, []);
 
+  console.log(process.env.NEXT_PUBLIC_BASE_URL);
+  console.log(process.env.MONGO_URL);
+  console.log(process.env.MAIL_ID);
+  console.log(process.env.MAIL_PASSWORD);
   return (
     <Provider store={store}>
       <MuiPickersUtilsProvider utils={DateFnsUtils}>

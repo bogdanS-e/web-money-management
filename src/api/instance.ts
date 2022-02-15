@@ -3,12 +3,11 @@ import cookieCutter from 'cookie-cutter';
 
 export const instance = axios.create({
   withCredentials: true,
-  baseURL: 'http://localhost:3000/api',
+  baseURL: process.env.NEXT_PUBLIC_BASE_URL,
 });
 
 instance.interceptors.request.use(
   (config) => {
-    //cookieCutter.set('refresh_token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImVmYm16YWtvZGJta3l0cnhpZkBrdmhyci5jb20iLCJpYXQiOjE2NDQ4NDU4NzYsImV4cCI6MTY0NTcwOTg3Nn0.58VW0aUOvTsbjCHUj4qvKb5bDauC82u48tRvBD7QQL8');
     const token = cookieCutter.get('access_token');
 
     config.headers.authorization = `${token}`;
@@ -33,7 +32,7 @@ instance.interceptors.response.use(
 
     if (!token) return;
 
-    fetch(`http://localhost:3000/api/auth/refresh-token/?token=${token}`)
+    return fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/refresh-token/?token=${token}`)
       .then((res) => {
         if (res.status === 200) {
           return res.json();
@@ -41,15 +40,17 @@ instance.interceptors.response.use(
           throw new Error('refresh error')
         }
       })
-      .then((refreshJson) => {
+       .then((refreshJson) => {
         cookieCutter.set('access_token', refreshJson.accessToken);
         cookieCutter.set('refresh_token', refreshJson.refreshToken);
 
-        config.headers.authorization = `${token}`;
+        config.headers.authorization = `${refreshJson.accessToken}`;
 
         return axios.request(config);
       })
       .catch(() => {
+        cookieCutter.set('access_token', '', { expires: new Date(0) });
+        cookieCutter.set('refresh_token', '', { expires: new Date(0) });
         window.location.replace('/');
       });
   },

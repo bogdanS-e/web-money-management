@@ -8,7 +8,7 @@ const emailClient = nodemailer.createTransport({
   }
 });
 
-emailClient.verify().then(console.log).catch(console.error);
+emailClient.verify().catch(console.error);
 
 
 export default emailClient;

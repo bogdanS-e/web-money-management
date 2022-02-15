@@ -7,7 +7,7 @@ import {
   StylesProvider,
 } from '@material-ui/core';
 
-import { theme } from '@/styles/theme';
+import theme from '@/styles/theme';
 
 export const loading = () => {
   const node =

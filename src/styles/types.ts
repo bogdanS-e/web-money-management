@@ -11,7 +11,10 @@ enum DeviceType {
 }
 
 export {
+  DeviceType,
+};
+
+export type {
   TStyled,
   TStyle,
-  DeviceType,
 };

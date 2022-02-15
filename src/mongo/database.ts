@@ -1,10 +1,10 @@
 import nextConnect from 'next-connect';
 import DBClient from './DBClient';
 
-async function database(req, res, next) {
+async function database(req, _, next) {
   const client = await DBClient.getInstance();
   req.dbClient = client;
-  if (!client) throw new Error('Client ERROOR');;
+  if (!client) throw new Error('Client ERROOR');
 
   req.db = client.db('money-management');
   return next();

@@ -10,7 +10,7 @@ import {
 } from './types';
 
 const initialState: IAuthState = {
-  isLoggedIn: false,
+  isLoggedIn: null,
   checked: false,
   redirectPath: '/'
 };

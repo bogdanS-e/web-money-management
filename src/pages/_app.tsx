@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { AppProps } from 'next/app';
-import { Provider } from 'react-redux';
+import { Provider, useDispatch, useSelector } from 'react-redux';
 import { createGlobalStyle } from 'styled-components';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { StylesProvider, ThemeProvider } from '@material-ui/core/styles';
@@ -11,6 +11,10 @@ import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 
 import theme from '@styles/theme';
 import { store } from '@/store';
+import { getUser } from '@/api/user';
+import { useRequest } from '@/utils/hooks/useRequest';
+import { selectIsLoggedIn } from '@/store/selectors';
+import CheckAuth from '@/components/auth/CheckAuth';
 
 
 const GlobalStyles = createGlobalStyle`
@@ -34,7 +38,7 @@ const GlobalStyles = createGlobalStyle`
 `;
 
 const App: React.FC<AppProps> = ({ Component, pageProps }) => {
-  React.useEffect(() => {
+  useEffect(() => {
     const jssStyles = document.querySelector('#jss-server-side');
 
     jssStyles?.parentElement?.removeChild(jssStyles);
@@ -44,9 +48,9 @@ const App: React.FC<AppProps> = ({ Component, pageProps }) => {
     <Provider store={store}>
       <MuiPickersUtilsProvider utils={DateFnsUtils}>
         <StylesProvider injectFirst>
+          <CheckAuth />
           <CssBaseline />
           <GlobalStyles />
-          {/* <CheckAuth /> */}
           <Component {...pageProps} />
         </StylesProvider>
       </MuiPickersUtilsProvider>

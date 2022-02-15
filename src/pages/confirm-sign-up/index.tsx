@@ -1,15 +1,18 @@
+import ConfirmSignUpForm from "@/components/auth/ConfirmSignUpForm";
 import Page from "@/components/common/Page";
-import SignUpForm from "@/components/auth/SignUpForm";
 import { AuthPageContainer } from "@/styles/auth";
+import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 import { selectIsLoggedIn } from "@/store/selectors";
 
 interface Props {
   title: string;
+  email: string;
+  code: string;
 }
 
-const SignUp: React.FC<Props> = ({ title }) => {
+const SignUp: React.FC<Props> = ({ title, email, code }) => {
   const router = useRouter();
   
   const isLoggedIn = useSelector(selectIsLoggedIn);
@@ -22,19 +25,30 @@ const SignUp: React.FC<Props> = ({ title }) => {
   if (isLoggedIn === null) {
     return null;
   }
+
   return (
     <Page title={title}>
       <AuthPageContainer vertical='start'>
-        <SignUpForm />
+        <ConfirmSignUpForm email={email} code={code} />
       </AuthPageContainer>
     </Page>
   );
 };
 
-export const getStaticProps = async () => {
+export const getServerSideProps: GetServerSideProps = async ({ query, res }) => {
+  const { email, code } = query;
+  
+  if (!email || !code) {
+    res.setHeader('location', '/sign-up');
+    res.statusCode = 302;
+    res.end();
+  }
+  
   return {
     props: {
-      title: 'Sign Up | Money Management'
+      title: 'Confirm Sign Up | Money Management',
+      email,
+      code,
     },
   }
 }

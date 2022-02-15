@@ -1,5 +1,5 @@
 export interface IAuthState {
-  isLoggedIn: boolean;
+  isLoggedIn: boolean | null;
   checked: boolean;
   redirectPath: string;
 }

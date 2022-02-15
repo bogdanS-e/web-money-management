@@ -10,7 +10,7 @@ interface Props {
 const Page: React.FC<Props> = ({ title, children }) => {
   return (
     <>
-      <Head title={title} />
+      <Head title={title ?? 'Web Coins'} />
       {children}
     </>
   );

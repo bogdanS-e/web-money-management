@@ -8,6 +8,7 @@
     "dev:server": "node server.js",
     "build": "next build",
     "start": "next start -p $PORT",
+    "heroku-postbuild": "npm run build",
     "lint": "eslint \"src\" \".\" --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "npm run lint -- --fix",
     "prod": "npm run build && npm run prod:server",

@@ -3,14 +3,15 @@ import React from 'react';
 import Head from '@/components/common/Head';
 
 interface Props {
+  description?: string;
   title?: string;
   children?: React.ReactNode;
 }
 
-const Page: React.FC<Props> = ({ title, children }) => {
+const Page: React.FC<Props> = ({ title, description, children }) => {
   return (
     <>
-      <Head title={title ?? 'Web Coins'} />
+      <Head metaDescription={description} title={title ?? 'Web Coins'} />
       {children}
     </>
   );

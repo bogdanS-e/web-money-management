@@ -1,6 +1,8 @@
 export interface IUser {
   email: string;
   name: string;
+  onboarded: boolean;
+  budgets: IBudget[];
 }
 
 export interface ISignInRequest {
@@ -25,4 +27,16 @@ export interface IConfirmSignUpRequest {
 export interface IUserTokens {
   accessToken: string;
   refreshToken: string;
+}
+
+export interface IBudget {
+  id: string;
+  users: [string],
+  name: string;
+  amount: number;
+}
+
+export interface ICreateBudgetRequest {
+  name: string;
+  amount: number;
 }

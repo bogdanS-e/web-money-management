@@ -1,10 +1,10 @@
 import produce from 'immer';
 
 import {
-  UserActionTypes, IUserState, SET_USER
+  UserActionTypes, IUserState, SET_USER, ADD_BUDGET
 } from './types';
 
-const initialState: IUserState = {user: null};
+const initialState: IUserState = { user: null };
 
 export const userReducer = (
   state = initialState,
@@ -14,6 +14,11 @@ export const userReducer = (
     switch (action.type) {
       case SET_USER:
         draft.user = action.payload.user;
+        break;
+      case ADD_BUDGET:
+        if (!draft.user) return;
+
+        draft.user.budgets.push(action.payload.budget);
         break;
       default:
         break;

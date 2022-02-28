@@ -10,6 +10,9 @@ import { useRouter } from 'next/router';
 import { useRequest } from '@/utils/hooks/useRequest';
 import { loginFail, loginSuccess } from '@/store/auth/actions';
 import { setUser } from '@/store/user/actions';
+import BugetForm from '@/components/onboarding/CreateBugetForm';
+import { AuthPageContainer } from '@/styles/auth';
+import Onboarding from '@/components/onboarding';
 
 interface Props {
   user?: IUser;
@@ -20,9 +23,9 @@ const Home: React.FC<Props> = () => {
 
   const router = useRouter();
   const dispatch = useDispatch();
-  
+
   const isLoggedIn = useSelector(selectIsLoggedIn);
-  
+
   const getUserRequest = useRequest(getUser, {
     onSuccess: (userData) => {
       dispatch(loginSuccess());
@@ -41,7 +44,7 @@ const Home: React.FC<Props> = () => {
     }
   }, [user, isLoggedIn]);
 
-  if (isLoggedIn === null) {
+  if (isLoggedIn === null || !user) {
     return null;
   }
 
@@ -52,10 +55,15 @@ const Home: React.FC<Props> = () => {
       <Page title='Web money page' />
     );
   }
-  
+
   return (
     <Page title={user ? `${user.name}'s page` : 'Web money page'}>
-      lollol
+      {user.onboarded ? (
+        <></>) : (
+        <AuthPageContainer>
+          <Onboarding username={user.name} />
+        </AuthPageContainer>
+      )}
     </Page>
   );
 };

@@ -42,7 +42,10 @@ handler.post(async (req, res) => {
     await req.db.collection('users').updateOne(
       { email },
       {
-        $set: { isVerificated: true },
+        $set: { 
+          isVerificated: true,
+          onboarded: false,
+        },
         $unset: { code: '' },
       },
     );

@@ -1,10 +1,5 @@
-import { ICreateUserRequest } from '@/api/models/user';
 import nextConnect from 'next-connect';
-import bcrypt from 'bcrypt';
 import middleware from '../../../mongo/database';
-import generateCode from '@/utils/generateCode';
-import emailClient from '@/mongo/emailClient';
-import Cookies from 'cookies';
 import protectedRoute from '@/mongo/jwtProvider';
 
 const handler = nextConnect();
@@ -29,9 +24,17 @@ handler.get(async (req, res) => {
       return;
     }
 
-    const { name, email: userEmail } = user;
+    const { name, onboarded, email: userEmail } = user;
 
-    res.status(200).json({ name, email: userEmail });
+    //@ts-ignore
+    const budgets = await req.db.collection('budgets').find({ users: userEmail }, { projection: { _id: 0 } }).toArray();
+
+    res.status(200).json({
+      name,
+      onboarded,
+      email: userEmail,
+      budgets,
+    });
 
   } catch (e) {
     console.log(e);

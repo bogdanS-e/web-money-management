@@ -34,6 +34,7 @@ export interface IBudget {
   users: [string],
   name: string;
   amount: number;
+  availableAmount: number;
 }
 
 export interface ICreateBudgetRequest {

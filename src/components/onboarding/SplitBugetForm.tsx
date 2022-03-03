@@ -26,47 +26,22 @@ import { loginSuccess } from '@/store/auth/actions';
 import FormFooter from '../auth/FormFooter';
 import { TextField } from '@material-ui/core';
 import { setBudget } from '@/api/user';
+import CategoryForm from '../common/category-form';
+import { IBudget } from '@/api/models/user';
 
 interface Props {
-  
+  budget: IBudget;
 }
 
-const SplitBugetForm: React.FC<Props> = () => {
+const SplitBugetForm: React.FC<Props> = ({ budget }) => {
   const dispatch = useDispatch();
 
   const router = useRouter();
 
-  const budgetForm = useForm(
-    {
-      name: 'My EUR budget',
-      budget: ''
-    },
-    {
-      name: [VALIDATORS.NOT_EMPTY_STRING('Name')],
-      budget: [VALIDATORS.NOT_EMPTY_STRING('Budget')],
-    },
-  );
+  const onSubmit = (categories) => {
+    console.log(categories);
 
-  const setBudgetRequest = useRequest(setBudget, {
-    onSuccess: (budget) => {
-      console.log(budget);
-    }
-  });
-
-  const isLoading = useMemo(() => {
-    return setBudgetRequest.loading
-  }, [setBudgetRequest.loading]);
-
-  const handleSetBudget = () => {
-    const parsedBudget = parseInt(budgetForm.data.budget);
-
-    if (isNaN(parsedBudget) || !budgetForm.isValid()) return;
-
-    setBudgetRequest.fetch({
-      amount: parsedBudget,
-      name: budgetForm.data.name,
-    });
-  }
+  };
 
   const renderForm = () => (
     <Column>
@@ -74,24 +49,27 @@ const SplitBugetForm: React.FC<Props> = () => {
         <FormHeader>Nice, you created your first budget <Emoji>🎉</Emoji></FormHeader>
         <FormHeaderSubtitle>Let's try to split it in different categories</FormHeaderSubtitle>
         <div style={{ width: '100%', marginTop: '-25px', textAlign: 'center' }}>
-          <Column>
-            
-          </Column>
+          <CategoryForm
+            budgetId={budget.id}
+            onSubmit={onSubmit}
+            triggerArea={(
+              <SubmitWrapper>
+                <TextButton
+                  width='55%'
+                //loading={isLoading}
+                //disabled={isLoading}
+                >
+                  Done
+                </TextButton>
+              </SubmitWrapper>
+            )}
+          />
 
           {/* signInForm.errors.email[0] && (
             <InputErrorMessage message={signInForm.errors.email[0]} />
           ) */}
 
-          <SubmitWrapper>
-            <TextButton
-              onClick={handleSetBudget}
-              width='55%'
-              loading={isLoading}
-              disabled={isLoading}
-            >
-              Done
-            </TextButton>
-          </SubmitWrapper>
+
         </div>
         <FooterWrapper>
           <FormFooter />

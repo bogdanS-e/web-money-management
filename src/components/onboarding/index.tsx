@@ -1,3 +1,4 @@
+import { IBudget } from '@/api/models/user';
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import CreateBugetForm from './CreateBugetForm';
@@ -9,12 +10,16 @@ interface Props {
 
 const Onboarding: React.FC<Props> = ({ username }) => {
   const [step, setStep] = useState(1);
+  const [budget, setBudget] = useState<IBudget>();
 
-  const handleNext = () => setStep((prevStep) => prevStep + 1);
+  const handleNext = (budget: IBudget) => {
+    setStep((prevStep) => prevStep + 1);
+    setBudget(budget);
+  };
 
   const renderForm = () => {
     if (step === 1) return <CreateBugetForm username={username} onNextStep={handleNext} />;
-    if (step === 2) return <SplitBugetForm />;
+    if (step === 2 && budget) return <SplitBugetForm budget={budget} />;
 
     return null;
   }

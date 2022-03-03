@@ -29,6 +29,7 @@ handler.post(async (req, res) => {
     await req.db.collection('budgets').insertOne({
       users: [email],
       amount,
+      availableAmount: amount,
       name,
       id,
     });
@@ -36,6 +37,7 @@ handler.post(async (req, res) => {
     res.status(200).json({
       users: [email],
       amount,
+      availableAmount: amount,
       name,
       id,
     });

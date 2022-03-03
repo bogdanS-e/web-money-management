@@ -17,10 +17,11 @@ import FormFooter from '../auth/FormFooter';
 import { TextField } from '@material-ui/core';
 import { setBudget } from '@/api/user';
 import { addBudget } from '@/store/user/actions';
+import { IBudget } from '@/api/models/user';
 
 interface Props {
   username: string;
-  onNextStep: () => void;
+  onNextStep: (budget: IBudget) => void;
 }
 
 const CreateBugetForm: React.FC<Props> = ({ username, onNextStep }) => {
@@ -40,7 +41,7 @@ const CreateBugetForm: React.FC<Props> = ({ username, onNextStep }) => {
   const setBudgetRequest = useRequest(setBudget, {
     onSuccess: (budget) => {
       dispatch(addBudget(budget));
-      onNextStep();
+      onNextStep(budget);
     }
   });
 

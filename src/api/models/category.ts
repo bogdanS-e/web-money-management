@@ -1,4 +1,4 @@
-export type TCategoryName = 
+export type TCategoryName =
   'Housing' |
   'Transportation' |
   'Food' |
@@ -11,4 +11,13 @@ export type TCategoryName =
 export interface ICategory {
   name: TCategoryName;
   id: number;
+}
+
+export interface ICreateCategory extends ICategory {
+  amount: number | null;
+}
+
+export interface ISetCategoryRequest {
+  budgetId: string;
+  categories: ICreateCategory[];
 }

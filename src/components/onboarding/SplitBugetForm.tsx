@@ -1,33 +1,24 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import styled from 'styled-components';
+import { useDispatch } from 'react-redux';
 
-import ClickableText from '@/components/common/ClickableText';
+import { IBudget } from '@/api/models/user';
+import { setCategories } from '@/api/category';
+import { ICreateCategory } from '@/api/models/category';
+import { updateBudget, updateUser } from '@/store/user/actions';
+import { useRequest } from '@/utils/hooks/useRequest';
+
 import TextButton from '@/components/common/TextButton';
 import ErrorMessage from '@/components/common/ErrorMessage';
-import TextInput from '@/components/common/text-input';
-import cookieCutter from 'cookie-cutter';
-
+import FormFooter from '../auth/FormFooter';
+import CategoryForm from '../common/category-form';
 import {
   FormContainer,
   FormHeader,
-  TextWrapper,
   FormHeaderSubtitle,
   MessageContainer,
 } from '@/styles/auth';
-import theme from '@/styles/theme';
-import { Column, Row } from '@/styles/layout';
-import { useRouter } from 'next/router';
-import useForm, { VALIDATORS } from '@/utils/hooks/useForm';
-import useQueryParams from '@/utils/hooks/useQueryParams';
-import { useRequest } from '@/utils/hooks/useRequest';
-import { signIn } from '@/api/auth';
-import { useDispatch } from 'react-redux';
-import { loginSuccess } from '@/store/auth/actions';
-import FormFooter from '../auth/FormFooter';
-import { TextField } from '@material-ui/core';
-import { setBudget } from '@/api/user';
-import CategoryForm from '../common/category-form';
-import { IBudget } from '@/api/models/user';
+import { Column } from '@/styles/layout';
 
 interface Props {
   budget: IBudget;
@@ -36,11 +27,16 @@ interface Props {
 const SplitBugetForm: React.FC<Props> = ({ budget }) => {
   const dispatch = useDispatch();
 
-  const router = useRouter();
+  const setCategoriesRequest = useRequest(setCategories, {
+    onSuccess: (newBudget) => {
+      dispatch(updateUser({ onboarded: true }));
+      dispatch(updateBudget(newBudget));
 
-  const onSubmit = (categories) => {
-    console.log(categories);
+    }
+  });
 
+  const onSubmit = (budgetId: string, categories: ICreateCategory[]) => {
+    setCategoriesRequest.fetch({ budgetId, categories })
   };
 
   const renderForm = () => (
@@ -56,20 +52,21 @@ const SplitBugetForm: React.FC<Props> = ({ budget }) => {
               <SubmitWrapper>
                 <TextButton
                   width='55%'
-                //loading={isLoading}
-                //disabled={isLoading}
+                  loading={setCategoriesRequest.loading}
+                  disabled={setCategoriesRequest.loading}
                 >
                   Done
                 </TextButton>
               </SubmitWrapper>
             )}
           />
-
-          {/* signInForm.errors.email[0] && (
-            <InputErrorMessage message={signInForm.errors.email[0]} />
-          ) */}
-
-
+          <MessageContainer>
+            {setCategoriesRequest.fail && (
+              <ErrorMessage
+                message={setCategoriesRequest.error?.message ?? 'Something went wrong'}
+              />
+            )}
+          </MessageContainer>
         </div>
         <FooterWrapper>
           <FormFooter />

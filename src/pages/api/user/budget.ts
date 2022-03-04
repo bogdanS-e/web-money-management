@@ -30,6 +30,7 @@ handler.post(async (req, res) => {
       users: [email],
       amount,
       availableAmount: amount,
+      categories: [],
       name,
       id,
     });
@@ -38,6 +39,7 @@ handler.post(async (req, res) => {
       users: [email],
       amount,
       availableAmount: amount,
+      categories: [],
       name,
       id,
     });

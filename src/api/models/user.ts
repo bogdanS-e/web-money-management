@@ -1,3 +1,5 @@
+import { ICreateCategory } from "./category";
+
 export interface IUser {
   email: string;
   name: string;
@@ -34,6 +36,7 @@ export interface IBudget {
   users: [string],
   name: string;
   amount: number;
+  categories: ICreateCategory[],
   availableAmount: number;
 }
 

@@ -59,7 +59,9 @@ const Home: React.FC<Props> = () => {
   return (
     <Page title={user ? `${user.name}'s page` : 'Web money page'}>
       {user.onboarded ? (
-        <></>) : (
+        <>
+          userReady
+        </>) : (
         <AuthPageContainer>
           <Onboarding username={user.name} />
         </AuthPageContainer>

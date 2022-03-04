@@ -1,24 +1,21 @@
 import React, { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
+import styled from 'styled-components';
 import { MenuItem, Select, TextField, Button } from '@material-ui/core';
 import { CarSimple, House, Pizza, Bandaids, CurrencyDollar, Fire, Money, DotsThreeOutline, Plus } from 'phosphor-react';
-import styled from 'styled-components';
-import { Column, Row } from '@/styles/layout';
+
 import { useRequest } from '@/utils/hooks/useRequest';
 import { getCategories } from '@/api/category';
-import { TCategoryName, ICategory } from '@/api/models/category';
+import { TCategoryName, ICategory, ICreateCategory } from '@/api/models/category';
 import { toast } from '@/utils/toast';
 import { useSelector } from 'react-redux';
 import { selectUserBudget } from '@/store/selectors';
 
+import { Column, Row } from '@/styles/layout';
+
 interface Props {
-  onSubmit: (data: IInputData[]) => void;
+  onSubmit: (budgetId: string, data: ICreateCategory[]) => void;
   triggerArea: ReactNode;
   budgetId: string;
-}
-
-interface IInputData {
-  id: number;
-  amount: number | null;
 }
 
 type IMappedIcon = {
@@ -52,10 +49,6 @@ const CategoryForm: React.FC<Props> = ({ triggerArea, budgetId, onSubmit }) => {
     if (!inputValues) return initAmount;
 
     const inputSum = inputValues.reduce((total, cur) => (total || 0) + (cur || 0), 0);
-
-    console.log(inputSum);
-    console.log(initAmount - (inputSum || 0));
-
 
     return initAmount - (inputSum || 0);
   }, [budget, inputValues]);
@@ -108,7 +101,7 @@ const CategoryForm: React.FC<Props> = ({ triggerArea, budgetId, onSubmit }) => {
   };
 
   const handleSubmit = () => {
-    const mappedData: IInputData[] = [];
+    const mappedData: ICreateCategory[] = [];
 
     if (availableMoney && availableMoney < 0) {
       toast('error', 'Available money couldnot be negative number');
@@ -121,17 +114,27 @@ const CategoryForm: React.FC<Props> = ({ triggerArea, budgetId, onSubmit }) => {
         return;
       }
 
+      const categoryId = selectedCategories[i];
+      const categoryName = categories?.find(({ id }) => id === categoryId)?.name;
+
+      if (!categoryName) {
+        toast('error', 'Something went wrong');
+        return;
+      }
+
       mappedData.push({
         id: selectedCategories[i],
         amount: inputValues[i],
+        name: categoryName,
       });
     }
 
     if (!mappedData.length) {
       toast('error', 'Complete all fields');
+      return;
     }
 
-    onSubmit(mappedData);
+    onSubmit(budgetId, mappedData);
   };
 
   useEffect(() => {

@@ -1,6 +1,6 @@
 import { IBudget } from '@/api/models/user';
 import React, { useState } from 'react';
-import styled from 'styled-components';
+
 import CreateBugetForm from './CreateBugetForm';
 import SplitBugetForm from './SplitBugetForm';
 

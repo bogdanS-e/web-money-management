@@ -44,7 +44,7 @@ const Home: React.FC<Props> = () => {
     }
   }, [user, isLoggedIn]);
 
-  if (isLoggedIn === null || !user) {
+  if (isLoggedIn === null) {
     return null;
   }
 
@@ -55,6 +55,8 @@ const Home: React.FC<Props> = () => {
       <Page title='Web money page' />
     );
   }
+
+  if(!user) return null;
 
   return (
     <Page title={user ? `${user.name}'s page` : 'Web money page'}>

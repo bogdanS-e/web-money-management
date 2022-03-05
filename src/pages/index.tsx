@@ -1,7 +1,5 @@
-import { GetServerSideProps } from 'next';
 import React, { useEffect } from 'react';
 import { getUser } from '@/api/user';
-import useSSRRequest from '@/utils/hooks/useSSRRequest';
 import { IUser } from '@/api/models/user';
 import Page from '@/components/common/Page';
 import { useDispatch, useSelector } from 'react-redux';
@@ -10,9 +8,9 @@ import { useRouter } from 'next/router';
 import { useRequest } from '@/utils/hooks/useRequest';
 import { loginFail, loginSuccess } from '@/store/auth/actions';
 import { setUser } from '@/store/user/actions';
-import BugetForm from '@/components/onboarding/CreateBugetForm';
 import { AuthPageContainer } from '@/styles/auth';
 import Onboarding from '@/components/onboarding';
+import Main from '@/components/main/Main';
 
 interface Props {
   user?: IUser;
@@ -62,7 +60,7 @@ const Home: React.FC<Props> = () => {
     <Page title={user ? `${user.name}'s page` : 'Web money page'}>
       {user.onboarded ? (
         <>
-          userReady
+          <Main />
         </>) : (
         <AuthPageContainer>
           <Onboarding username={user.name} />
@@ -71,22 +69,5 @@ const Home: React.FC<Props> = () => {
     </Page>
   );
 };
-
-/* export const getServerSideProps: GetServerSideProps = async ({ res, req }) => {
-  const resp = await useSSRRequest(req, res, '/user/get-user/');
-
-  if (resp.status === 200) {
-    const user = await resp.json();
-
-    return {
-      props: {
-        user,
-      },
-    }
-  }
-
-  return { props: {} }
-} */
-
 
 export default Home;

@@ -1,28 +1,31 @@
+import { Row } from '@/styles/layout';
 import React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
+
+import LogoImg from '../../../public/assets/logo.png';
+import LogoText from '../../../public/assets/logo-text.png';
 
 interface Props {
-  size?: string;
   className?: string;
 }
 
-const Logo: React.FC<Props> = ({ size = '48px', className }) => {
+const Logo: React.FC<Props> = ({ className }) => {
+
   return (
-    <StyledLogo
-      width={size}
-      height={size}
-      className={className}
-      src='/logo.png'
-      alt='logo'
-    />
+    <Row className={className}>
+      <img style={{ height: '100%' }} src={LogoImg} alt="logo" />
+      <LogoTextWrapper>
+        <img style={{ height: '100%' }} src={LogoText} alt="logo-text" />
+      </LogoTextWrapper>
+    </Row>
   );
 };
 
-const StyledLogo = styled.img<{ width: string; height: string }>`
-  width: ${({ width }) => width};
-  height: ${({ height }) => height};
-  flex-shrink: 0;
-  border-radius: 50%;
+export default Logo;
+
+const LogoTextWrapper = styled.div`
+  margin-left: 6px;
+  margin-top: -3px;
+  height: 100%;
 `;
 
-export default Logo;

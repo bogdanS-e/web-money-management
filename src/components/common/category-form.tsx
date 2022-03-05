@@ -22,7 +22,7 @@ type IMappedIcon = {
   [key in TCategoryName]: ReactNode;
 };
 
-const MappedIcon: IMappedIcon = {
+export const MappedIcon: IMappedIcon = {
   'Housing': <House size={18} />,
   'Transportation': <CarSimple size={18} />,
   'Food': <Pizza size={18} />,

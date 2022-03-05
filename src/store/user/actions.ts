@@ -1,7 +1,7 @@
 import { IBudget, IUser } from '@/api/models/user';
 import { UserActionTypes, SET_USER, ADD_BUDGET, UPDATE_BUDGET, UPDATE_USER } from './types';
 
-export function setUser(user: IUser): UserActionTypes {
+export function setUser(user: IUser | null): UserActionTypes {
   return {
     type: SET_USER,
     payload: {

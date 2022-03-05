@@ -12,7 +12,7 @@ export const UPDATE_BUDGET = 'UPDATE_BUDGET';
 interface SetUser {
   type: typeof SET_USER;
   payload: {
-    user: IUser;
+    user: IUser | null;
   }
 }
 

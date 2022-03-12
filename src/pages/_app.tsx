@@ -23,8 +23,9 @@ const GlobalStyles = createGlobalStyle`
     box-sizing: border-box;
   }
 
-  html {
+  html, body, #__next {
     scroll-behavior: smooth;
+    min-height: 100vh;
   }
 
   body {

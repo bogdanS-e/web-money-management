@@ -46,11 +46,12 @@ const AvatarGroup: React.FC<Props> = ({ max, total, children: childrenProp, clas
       bordersColor={bordersColor}
       size={size}
     >
-      {extraAvatars && (
+      {extraAvatars ? (
         <Avatar style={{ paddingLeft: '5px' }}>
           +{extraAvatars}
         </Avatar>
-      )}
+      ) : null}
+
       {children.slice(0, maxAvatars).reverse()}
     </Group>
   );

@@ -1,7 +1,7 @@
 import React, { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { MenuItem, Select, TextField, Button } from '@material-ui/core';
-import { CarSimple, House, Pizza, Bandaids, CurrencyDollar, Fire, Money, DotsThreeOutline, Plus } from 'phosphor-react';
+import { CarSimple, House, Pizza, Bandaids, CurrencyDollar, Fire, Money, DotsThreeOutline, Plus, TrashSimple } from 'phosphor-react';
 
 import { useRequest } from '@/utils/hooks/useRequest';
 import { getCategories } from '@/api/category';
@@ -11,6 +11,7 @@ import { useSelector } from 'react-redux';
 import { selectUserBudget } from '@/store/selectors';
 
 import { Column, Row } from '@/styles/layout';
+import theme from '@/styles/theme';
 
 interface Props {
   onSubmit: (budgetId: string, data: ICreateCategory[]) => void;
@@ -41,10 +42,28 @@ const CategoryForm: React.FC<Props> = ({ triggerArea, budgetId, onSubmit }) => {
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
   const [inputValues, setInputValues] = useState<(number | null)[]>([]);
 
+  useEffect(() => {
+    if (!budget || !categories) return;
+
+    const defaultSelectedCategories: number[] = [];
+    const defaultInputValues: (number | null)[] = [];
+    let defaultInputsCounter = 1;
+
+    budget.categories.forEach(({ id, amount }) => {
+      defaultSelectedCategories.push(id);
+      defaultInputValues.push(amount);
+      defaultInputsCounter++;
+    });
+
+    setSelectedCategories(defaultSelectedCategories);
+    setInputValues(defaultInputValues);
+    setInputsCounter(defaultInputsCounter);
+  }, [budget, categories]);
+
   const availableMoney = useMemo(() => {
     if (!budget) return null;
 
-    const initAmount = budget.availableAmount;
+    const initAmount = budget.amount;
 
     if (!inputValues) return initAmount;
 
@@ -69,6 +88,23 @@ const CategoryForm: React.FC<Props> = ({ triggerArea, budgetId, onSubmit }) => {
     setInputsCounter((prev) => prev + 1);
   };
 
+  const onDeleteCategory = (index: number) => () => {
+    if (!index && index !== 0) return;
+
+    setInputsCounter((prev) => prev - 1);
+    setInputValues((prev) => {
+      const temp = [...prev];
+      temp.splice(index, 1);
+      return temp;
+    });
+    setSelectedCategories((prev) => {
+      const temp = [...prev];
+      temp.splice(index, 1);
+      return temp;
+    });
+  };
+
+
   const handleSelect = (index: number) => (event) => {
     if (!event.target.value) return;
 
@@ -88,9 +124,11 @@ const CategoryForm: React.FC<Props> = ({ triggerArea, budgetId, onSubmit }) => {
   };
 
   const handleOnChangeValue = (index: number) => (event) => {
-    if (!event.target.value) return;
+    let value: number | null = parseInt(event.target.value);
 
-    const value = parseInt(event.target.value);
+    if (isNaN(value)) {
+      value = null;
+    };
 
     setInputValues((prev) => {
       const copyInputsData = [...prev];
@@ -147,6 +185,9 @@ const CategoryForm: React.FC<Props> = ({ triggerArea, budgetId, onSubmit }) => {
         value={selectedCategories[index] || ''}
         onChange={handleSelect(index)}
         displayEmpty
+        MenuProps={{
+          style: { zIndex: '2147483646' }
+        }}
       >
         <MenuItem value=''>Select category </MenuItem>
         {categories?.map(({ name, id }) => (
@@ -165,20 +206,23 @@ const CategoryForm: React.FC<Props> = ({ triggerArea, budgetId, onSubmit }) => {
       <StyledTextField
         onChange={handleOnChangeValue(index)}
         type="number"
+        value={inputValues[index] || ''}
         disabled={!selectedCategories[index]}
         inputProps={{
           placeholder: 'Enter budget',
-          inputMode: 'numeric',
-          pattern: '[0-9]*',
-          min: 0,
-          max: 10,
           style: {
             textAlign: 'center',
           },
         }}
       />
+      <DeleteWrapper
+        onClick={onDeleteCategory(index)}
+        disabled={!selectedCategories[index]}
+      >
+        <TrashSimple size={18} />
+      </DeleteWrapper>
     </FormControl>
-  ), [availableCategories, selectedCategories]);
+  ), [availableCategories, selectedCategories, inputValues]);
 
   if (!budget) {
     throw new Error('Couldn`t find budget');
@@ -235,8 +279,8 @@ const FormControl = styled(Row)`
 `;
 
 const StyledTextField = styled(TextField)`
-  margin: 2px 0 0 20px;
-  width: 120px;
+  margin: 2px 0 0 auto;
+  width: 105px;
 `;
 
 const Icon = styled(Row)`
@@ -249,4 +293,19 @@ const StyledSelect = styled(Select)`
     align-items: center;
     justify-content: center;
   }
+`;
+
+const DeleteWrapper = styled.div<{ disabled: boolean }>`
+  cursor: pointer;
+  color: ${theme.colors.grey200};
+  transition: color 0.3s;
+  margin-left: 10px;
+
+  &:hover {
+    color: ${theme.colors.blackBase};
+  }
+
+  ${({ disabled }) => disabled && css`
+    pointer-events: none;
+  `}
 `;

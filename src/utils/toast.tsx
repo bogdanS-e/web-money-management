@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { Snackbar } from '@material-ui/core';
 import MuiAlert, { AlertProps, Color } from '@material-ui/lab/Alert';
 
-import useToggle  from './hooks/useToggle';
+import useToggle from './hooks/useToggle';
 
 const Alert: React.FC<AlertProps> = (props) => {
   return <MuiAlert elevation={6} variant='filled' {...props} />;
@@ -25,7 +25,7 @@ const ToastComponent: React.FC<Props> = ({ severity, text, node }) => {
   }, [close, node]);
 
   return (
-    <Snackbar open={isOpen} autoHideDuration={6000} onClose={onClose}>
+    <Snackbar style={{ zIndex: '2147483646' }} open={isOpen} autoHideDuration={6000} onClose={onClose}>
       <Alert severity={severity}>{text}</Alert>
     </Snackbar>
   );

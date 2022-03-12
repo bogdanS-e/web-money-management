@@ -2,7 +2,7 @@ import { Row } from '@/styles/layout';
 import { Container } from '@material-ui/core';
 import React from 'react';
 import styled from 'styled-components';
-import Logo from './logo';
+import Logo from './Logo';
 import UserMenu from './user-menu';
 
 interface Props {

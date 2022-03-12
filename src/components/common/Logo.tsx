@@ -1,6 +1,6 @@
 import { Row } from '@/styles/layout';
 import React from 'react';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 import LogoImg from '../../../public/assets/logo.png';
 import LogoText from '../../../public/assets/logo-text.png';
@@ -10,7 +10,6 @@ interface Props {
 }
 
 const Logo: React.FC<Props> = ({ className }) => {
-
   return (
     <Row className={className}>
       <img style={{ height: '100%' }} src={LogoImg} alt="logo" />

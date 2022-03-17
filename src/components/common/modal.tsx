@@ -47,7 +47,7 @@ const Modal: React.FC<Props> = ({
           <ModalHeading>
             {header}
           </ModalHeading>
-          <CloseButton  onClick={onClose}>
+          <CloseButton onClick={onClose}>
             <X size={24} />
           </CloseButton>
         </ModalHeader>
@@ -69,6 +69,7 @@ const Modal: React.FC<Props> = ({
             )}
             <Button
               variant='contained'
+              style={{ color: 'white' }}
               color='primary'
               disabled={isLoading || actions.submit.disabled}
               onClick={actions.submit.onClick}

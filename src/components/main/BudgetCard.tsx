@@ -17,6 +17,7 @@ import CategoryForm, { MappedIcon } from "../common/category-form";
 import Modal from "../common/modal";
 import TextButton from "../common/TextButton";
 import UpdateBudgetForm from "../common/update-budget-form";
+import ShareBudgetContainer from "./share-video-container";
 
 interface Props {
   budget: IBudget;
@@ -24,9 +25,10 @@ interface Props {
 }
 
 const BudgetCard: React.FC<Props> = ({
-  budget: { name, id, amount, availableAmount, categories, users },
+  budget,
   className,
 }) => {
+  const { name, id, amount, availableAmount, categories, users } = budget;
   const dispatch = useDispatch();
 
   const [expanded, setExpanded] = useState(false);
@@ -34,6 +36,7 @@ const BudgetCard: React.FC<Props> = ({
 
   const [showEditBudget, handleShowEditBudget] = useToggle(false);
   const [showEditCategories, handleShowEditCategories] = useToggle(false);
+  const [showShareBudget, handleShowShareBudget] = useToggle(false);
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -64,7 +67,9 @@ const BudgetCard: React.FC<Props> = ({
           total={users.length}
           bordersColor='rgb(80, 80, 80)'
         >
-          <Avatar {...stringAvatar(user.name)} />
+          {users.map((name) => (
+            <Avatar {...stringAvatar(name)} />
+          ))}
         </StyledAvatarGroup>
 
         <Typography variant="subtitle1">
@@ -79,7 +84,7 @@ const BudgetCard: React.FC<Props> = ({
         </Typography>
       </CardContent>
       <Actions>
-        <ShareButton>
+        <ShareButton onClick={handleShowShareBudget.enable}>
           <ShareNetwork size={24} />
         </ShareButton>
         <ShareButton onClick={handleShowEditBudget.enable}>
@@ -125,6 +130,14 @@ const BudgetCard: React.FC<Props> = ({
             ))}
           </CardContent>
         </Collapse>
+      )}
+
+      {showShareBudget && (
+        <ShareBudgetContainer
+          isShownModal={showShareBudget}
+          onClose={handleShowShareBudget.disable}
+          selectedBudget={budget}
+        />
       )}
 
       {showEditBudget && (

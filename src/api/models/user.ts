@@ -44,3 +44,9 @@ export interface ICreateBudgetRequest {
   name: string;
   amount: number;
 }
+
+export interface IShareBudgetRequest {
+  id: string;
+  emails: string[];
+  message: string;
+}

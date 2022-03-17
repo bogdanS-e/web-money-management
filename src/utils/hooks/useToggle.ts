@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 interface IUseToggleActions {
+  handleShowEditName();
   set: (value: boolean) => void;
   enable: () => void;
   disable: () => void;

@@ -50,3 +50,8 @@ export interface IShareBudgetRequest {
   emails: string[];
   message: string;
 }
+
+export interface IRemoveUserFromBudgetRequest {
+  budgetId: string;
+  email: string;
+}

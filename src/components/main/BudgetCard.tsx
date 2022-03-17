@@ -8,6 +8,7 @@ import { useRequest } from "@/utils/hooks/useRequest";
 import useToggle from "@/utils/hooks/useToggle";
 import { stringAvatar } from "@/utils/maping";
 import { Avatar, Button, Card, CardActions, CardContent, CardMedia, Collapse, Divider, IconButton, Typography } from "@material-ui/core";
+import { useRouter } from "next/router";
 import { CaretDown, PencilSimple, ShareNetwork } from "phosphor-react";
 import React, { Fragment, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -30,6 +31,7 @@ const BudgetCard: React.FC<Props> = ({
 }) => {
   const { name, id, amount, availableAmount, categories, users } = budget;
   const dispatch = useDispatch();
+  const router = useRouter();
 
   const [expanded, setExpanded] = useState(false);
   const user = useSelector(selectUser);
@@ -56,7 +58,10 @@ const BudgetCard: React.FC<Props> = ({
   if (!user) return null;
 
   return (
-    <StyledCard className={className}>
+    <StyledCard
+      onClick={() => router.push(`/budget/${id}`, undefined, { shallow: true })}
+      className={className}
+    >
       <CardContent>
         <Title gutterBottom variant="h5">
           {name}
@@ -84,53 +89,64 @@ const BudgetCard: React.FC<Props> = ({
         </Typography>
       </CardContent>
       <Actions>
-        <ShareButton onClick={handleShowShareBudget.enable}>
+        <ShareButton onClick={(e) => {
+          e.stopPropagation();
+          handleShowShareBudget.enable();
+        }}>
           <ShareNetwork size={24} />
         </ShareButton>
-        <ShareButton onClick={handleShowEditBudget.enable}>
+        <ShareButton onClick={(e) => {
+          e.stopPropagation();
+          handleShowEditBudget.enable();
+        }}>
           <PencilSimple size={24} />
         </ShareButton>
 
         {!!categories.length && (
           <ExpandButton
-            onClick={handleExpandClick}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleExpandClick();
+            }}
             expanded={expanded}
           >
             <CaretDown size={24} />
           </ExpandButton>
         )}
       </Actions>
-      {!!categories.length && (
-        <Collapse in={expanded} timeout="auto" unmountOnExit>
-          <CardContent>
-            <CategoryItem horizontal="start">
-              <Typography variant="subtitle1">
-                Category
-              </Typography>
-              <CategoryAmount variant="h6">
-                Money
-              </CategoryAmount>
-            </CategoryItem>
-            <StyledDivider />
-            {categories.map(({ id, name, amount }) => (
-              <Fragment key={id}>
-                <CategoryItem horizontal="start">
-                  <Icon>
-                    {MappedIcon[name]}
-                  </Icon>
-                  <Typography variant="subtitle1">
-                    {name}
-                  </Typography>
-                  <CategoryAmount variant="h6">
-                    {amount}
-                  </CategoryAmount>
-                </CategoryItem>
-                <StyledDivider />
-              </Fragment>
-            ))}
-          </CardContent>
-        </Collapse>
-      )}
+      {
+        !!categories.length && (
+          <Collapse in={expanded} timeout="auto" unmountOnExit>
+            <CardContent>
+              <CategoryItem horizontal="start">
+                <Typography variant="subtitle1">
+                  Category
+                </Typography>
+                <CategoryAmount variant="h6">
+                  Money
+                </CategoryAmount>
+              </CategoryItem>
+              <StyledDivider />
+              {categories.map(({ id, name, amount }) => (
+                <Fragment key={id}>
+                  <CategoryItem horizontal="start">
+                    <Icon>
+                      {MappedIcon[name]}
+                    </Icon>
+                    <Typography variant="subtitle1">
+                      {name}
+                    </Typography>
+                    <CategoryAmount variant="h6">
+                      {amount}
+                    </CategoryAmount>
+                  </CategoryItem>
+                  <StyledDivider />
+                </Fragment>
+              ))}
+            </CardContent>
+          </Collapse>
+        )
+      }
 
       {showShareBudget && (
         <ShareBudgetContainer
@@ -183,7 +199,7 @@ const BudgetCard: React.FC<Props> = ({
           )}
         />
       )}
-    </StyledCard>
+    </StyledCard >
   );
 };
 

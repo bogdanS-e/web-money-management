@@ -73,10 +73,19 @@ const ShareBudgetContainer: React.FC<Props> = ({
   };
 
   const onSubmit = () => {
+    const includes = emails.some((email) => {
+      if (selectedBudget.users.includes(email)) {
+        toast('error', `User ${email} already has access to the budget`);
+        return true;
+      }
+    });
+
+    if (includes) return;
+
     shareBudgetRequest.fetch({
-      id: selectedBudget.id, 
-      emails, 
-      message : isOpenTextArea ? message : '',
+      id: selectedBudget.id,
+      emails,
+      message: isOpenTextArea ? message : '',
     });
   };
 

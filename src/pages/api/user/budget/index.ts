@@ -1,6 +1,6 @@
 import nextConnect from 'next-connect';
 import { v4 as uuid } from 'uuid';
-import middleware from '../../../mongo/database';
+import middleware from '../../../../mongo/database';
 import protectedRoute from '@/mongo/jwtProvider';
 import { IBudget } from '@/api/models/user';
 

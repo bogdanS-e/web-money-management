@@ -12,12 +12,12 @@ export const setBudget = (data: ICreateBudgetRequest) => {
 export const shareBudget = (data: IShareBudgetRequest) => {
   if (!data.message) {
     data.message = '';
-  }  
+  }
 
   return instance.post<IBudget>('/user/share-budget', data);
 };
 
-export const updateBudget = (budget: Partial<IBudget> & {id: string}) => {
+export const updateBudget = (budget: Partial<IBudget> & { id: string }) => {
   return instance.patch<IBudget>(`/user/update-budget/`, budget);
 };
 
@@ -27,4 +27,8 @@ export const editBudgetAmountById = (id: string, amount: number) => {
 
 export const deleteUserFromBudget = (data: IRemoveUserFromBudgetRequest) => {
   return instance.patch<IBudget>(`/user/remove-from-budget/`, data);
+};
+
+export const deleteBudget = (id: string) => {
+  return instance.delete<{ id: string }>(`/user/budget/${id}`);
 };

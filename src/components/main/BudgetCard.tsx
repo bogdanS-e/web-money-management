@@ -1,15 +1,16 @@
 import { setCategories } from "@/api/category";
 import { ICreateCategory } from "@/api/models/category";
 import { IBudget } from "@/api/models/user";
+import { deleteBudget } from "@/api/user";
 import { selectUser } from "@/store/selectors";
-import { updateBudget } from "@/store/user/actions";
+import { updateBudget, deleteBudget as deleteBudgetAction } from "@/store/user/actions";
 import { Row } from "@/styles/layout";
 import { useRequest } from "@/utils/hooks/useRequest";
 import useToggle from "@/utils/hooks/useToggle";
 import { stringAvatar } from "@/utils/maping";
-import { Avatar, Button, Card, CardActions, CardContent, CardMedia, Collapse, Divider, IconButton, Typography } from "@material-ui/core";
+import { Avatar, Button, Card, CardActions, CardContent, Collapse, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, IconButton, Typography } from "@material-ui/core";
 import { useRouter } from "next/router";
-import { CaretDown, PencilSimple, ShareNetwork } from "phosphor-react";
+import { CaretDown, PencilSimple, ShareNetwork, TrashSimple } from "phosphor-react";
 import React, { Fragment, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
@@ -37,6 +38,7 @@ const BudgetCard: React.FC<Props> = ({
   const user = useSelector(selectUser);
 
   const [showEditBudget, handleShowEditBudget] = useToggle(false);
+  const [showDeleteBudget, handleShowDeleteBudget] = useToggle(false);
   const [showEditCategories, handleShowEditCategories] = useToggle(false);
   const [showShareBudget, handleShowShareBudget] = useToggle(false);
 
@@ -53,6 +55,18 @@ const BudgetCard: React.FC<Props> = ({
 
   const onSubmit = (budgetId: string, categories: ICreateCategory[]) => {
     setCategoriesRequest.fetch({ budgetId, categories })
+  };
+
+  const deleteBudgetRequest = useRequest(deleteBudget, {
+    onSuccess: ({ id }) => {
+      dispatch(deleteBudgetAction(id));
+      handleShowDeleteBudget.disable();
+    }
+  });
+
+  const handleDeleteBudget = (e) => {
+    e.stopPropagation();
+    deleteBudgetRequest.fetch(budget.id);
   };
 
   if (!user) return null;
@@ -100,6 +114,12 @@ const BudgetCard: React.FC<Props> = ({
           handleShowEditBudget.enable();
         }}>
           <PencilSimple size={24} />
+        </ShareButton>
+        <ShareButton onClick={(e) => {
+          e.stopPropagation();
+          handleShowDeleteBudget.enable();
+        }}>
+          <TrashSimple size={24} />
         </ShareButton>
 
         {!!categories.length && (
@@ -154,6 +174,35 @@ const BudgetCard: React.FC<Props> = ({
           onClose={handleShowShareBudget.disable}
           selectedBudget={budget}
         />
+      )}
+
+      {showDeleteBudget && (
+        <Dialog
+          open={showDeleteBudget}
+          onClose={handleShowDeleteBudget.disable}
+        >
+          <DialogTitle>
+            Delete BudgetPage
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Are you sure want to delete <b>{budget.name}</b>
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleShowDeleteBudget.disable();
+              }}
+            >
+              Cancel
+            </Button>
+            <Button onClick={handleDeleteBudget} autoFocus>
+              Yes, delete
+            </Button>
+          </DialogActions>
+        </Dialog>
       )}
 
       {showEditBudget && (

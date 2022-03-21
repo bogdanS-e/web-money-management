@@ -7,7 +7,7 @@ import React, { Fragment, useState } from 'react';
 
 import Header from '../common/Header';
 import useToggle from '@/utils/hooks/useToggle';
-import { ArrowLeft, PencilSimple, TrashSimple } from 'phosphor-react';
+import { ArrowLeft, Minus, PencilSimple, Plus, TrashSimple } from 'phosphor-react';
 import Modal from '../common/modal';
 import TextButton from '../common/TextButton';
 import { Column, Row } from '@/styles/layout';
@@ -22,6 +22,11 @@ import { useRouter } from 'next/router';
 import { stringAvatar } from "@/utils/maping";
 import ShareBudgetContainer from '../main/share-video-container';
 import { selectUser } from '@/store/selectors';
+import IncrementBudgetForm from '../common/increment-budget-form';
+import theme from '@/styles/theme';
+import DecrementBudgetForm from '../common/decrement-budget-form';
+import IncrementCategoryForm from '../common/increment-category-form';
+import DecrementCategoryForm from '../common/decrement-category-form';
 
 interface Props {
   budget: IBudget;
@@ -36,6 +41,10 @@ const BudgetPage: React.FC<Props> = ({ budget }) => {
   const [showEditName, handleShowEditName] = useToggle(false);
   const [showEditCategories, handleShowEditCategories] = useToggle(false);
   const [showShareBudget, handleShowShareBudget] = useToggle(false);
+  const [showIncrementBudget, handleShowIncrementBudget] = useToggle(false);
+  const [showDecrementBudget, handleShowDecrementBudget] = useToggle(false);
+  const [showIncrementCategory, handleShowIncrementCategory, categoryToIncrement] = useToggle<number | null>(false, null);
+  const [showDecrementCategory, handleShowDecrementCategory, categoryToDecrement] = useToggle<number | null>(false, null);
   const [showDeleteUser, handleShowDeleteUser, userToDelete] = useToggle<string | null>(false, null);
 
   const [initialName, setInitialName] = useState(budget.name);
@@ -118,6 +127,13 @@ const BudgetPage: React.FC<Props> = ({ budget }) => {
             </Sub>
             <CategoryAmount variant="h4">
               {budget.amount}
+
+              <PlusAction onClick={handleShowIncrementBudget.enable}>
+                <Plus size={18} />
+              </PlusAction>
+              <MinusAction onClick={handleShowDecrementBudget.enable}>
+                <Minus size={18} />
+              </MinusAction>
             </CategoryAmount>
           </div>
           <div>
@@ -140,6 +156,11 @@ const BudgetPage: React.FC<Props> = ({ budget }) => {
                 <CategoryAmount variant="h6">
                   Money
                 </CategoryAmount>
+                <CategoryAction>
+                  <Typography variant="h6">
+                    &nbsp;&nbsp;&nbsp;Actions&nbsp;
+                  </Typography>
+                </CategoryAction>
               </CategoryItem>
               <StyledDivider />
               {budget.categories.map(({ id, name, amount }) => (
@@ -154,6 +175,14 @@ const BudgetPage: React.FC<Props> = ({ budget }) => {
                     <CategoryAmount variant="h6">
                       {amount}
                     </CategoryAmount>
+                    <CategoryAction>
+                      <PlusAction onClick={() => handleShowIncrementCategory.set(true, id)}>
+                        <Plus size={18} />
+                      </PlusAction>
+                      <MinusAction onClick={() => handleShowDecrementCategory.set(true, id)}>
+                        <Minus size={18} />
+                      </MinusAction>
+                    </CategoryAction>
                   </CategoryItem>
                   <StyledDivider />
                 </Fragment>
@@ -274,6 +303,46 @@ const BudgetPage: React.FC<Props> = ({ budget }) => {
           />
         )}
 
+        {showIncrementBudget && (
+          <Modal
+            header='Replenish the budget'
+            isShown={showIncrementBudget}
+            onClose={handleShowIncrementBudget.disable}
+            width='420px'
+            content={<IncrementBudgetForm budgetId={budget.id} onSubmit={handleShowIncrementBudget.disable} />}
+          />
+        )}
+
+        {showIncrementCategory && categoryToIncrement && (
+          <Modal
+            header='Add money to category'
+            isShown={showIncrementCategory}
+            onClose={handleShowIncrementCategory.disable}
+            width='420px'
+            content={<IncrementCategoryForm categoryId={categoryToIncrement} budgetId={budget.id} onSubmit={handleShowIncrementCategory.disable} />}
+          />
+        )}
+
+        {showDecrementCategory && categoryToDecrement && (
+          <Modal
+            header='Spend money from category'
+            isShown={showDecrementCategory}
+            onClose={handleShowDecrementCategory.disable}
+            width='420px'
+            content={<DecrementCategoryForm categoryId={categoryToDecrement} budgetId={budget.id} onSubmit={handleShowDecrementCategory.disable} />}
+          />
+        )}
+
+        {showDecrementBudget && (
+          <Modal
+            header='How mutch did you spend?'
+            isShown={showDecrementBudget}
+            onClose={handleShowDecrementBudget.disable}
+            width='420px'
+            content={<DecrementBudgetForm  budgetId={budget.id} onSubmit={handleShowDecrementBudget.disable} />}
+          />
+        )}
+
         {showEditCategories && (
           <Modal
             header='Change budget amount'
@@ -354,6 +423,30 @@ const Sub = styled.span`
 const ShareButton = styled(IconButton)`
   color: black;
   margin-left: 13px;
+`;
+
+const CategoryAction = styled.span`
+  margin-left: 15px;
+`;
+
+const PlusAction = styled(IconButton)`
+  margin-left: 5px;
+  background-color: ${theme.colors.success};
+  color: black;
+
+  &:hover {
+    background-color: ${theme.colors.successLight};
+  }
+`;
+
+const MinusAction = styled(IconButton)`
+  margin-left: 5px;
+  background-color: ${theme.colors.danger};
+  color: black;
+
+  &:hover {
+    background-color: ${theme.colors.dangerLight};
+  }
 `;
 
 const DeleteUser = styled(IconButton)`

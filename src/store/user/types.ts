@@ -7,6 +7,7 @@ export type IUserState = {
 export const SET_USER = 'SET_USER';
 export const UPDATE_USER = 'UPDATE_USER';
 export const ADD_BUDGET = 'ADD_BUDGET';
+export const DELETE_BUDGET = 'DELETE_BUDGET';
 export const UPDATE_BUDGET = 'UPDATE_BUDGET';
 
 interface SetUser {
@@ -28,10 +29,17 @@ interface AddBudget {
   }
 }
 
+interface DeleteBudget {
+  type: typeof DELETE_BUDGET;
+  payload: {
+    id: string;
+  }
+}
+
 interface UpdateBudget {
   type: typeof UPDATE_BUDGET;
   payload: Partial<IBudget>
 }
 
 
-export type UserActionTypes = SetUser | AddBudget | UpdateBudget | UpdateUser;
+export type UserActionTypes = SetUser | AddBudget | UpdateBudget | UpdateUser | DeleteBudget;

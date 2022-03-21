@@ -17,6 +17,12 @@ export interface ICreateCategory extends ICategory {
   amount: number | null;
 }
 
+export interface IIncrementCategory {
+  id: number;
+  amount: number;
+  budgetId: number;
+}
+
 export interface ISetCategoryRequest {
   budgetId: string;
   categories: ICreateCategory[];

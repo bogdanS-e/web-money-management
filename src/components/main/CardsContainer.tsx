@@ -16,6 +16,7 @@ import CategoryForm from "../common/category-form";
 import Modal from "../common/modal";
 import BudgetCard from "./BudgetCard";
 import TextButton from '@/components/common/TextButton';
+import MoneyHistory from "@/mongo/moneyHistory";
 
 interface Props {
 }
@@ -74,6 +75,8 @@ const CardsContainer: React.FC<Props> = () => {
   const onSubmit = (budgetId: string, categories: ICreateCategory[]) => {
     setCategoriesRequest.fetch({ budgetId, categories })
   };
+
+  console.log(new MoneyHistory(budgets[0], budgets[1], 'h'));
 
   return (
     <StyledContainer>

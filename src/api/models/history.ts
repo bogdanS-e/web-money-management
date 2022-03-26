@@ -7,7 +7,7 @@ export interface IHistoryData {
 }
 
 export interface IHistory {
-  date: Date;
+  date: string;
   title: string;
   history: IHistoryData[];
 }

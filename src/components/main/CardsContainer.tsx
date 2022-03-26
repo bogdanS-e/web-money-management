@@ -76,8 +76,6 @@ const CardsContainer: React.FC<Props> = () => {
     setCategoriesRequest.fetch({ budgetId, categories })
   };
 
-  console.log(new MoneyHistory(budgets[0], budgets[1], 'h'));
-
   return (
     <StyledContainer>
       <Row horizontal="start" vertical="start" wrapped>

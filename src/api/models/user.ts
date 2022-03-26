@@ -1,4 +1,5 @@
 import { ICreateCategory } from "./category";
+import { IHistory } from "./history";
 
 export interface IUser {
   email: string;
@@ -38,6 +39,7 @@ export interface IBudget {
   amount: number;
   categories: ICreateCategory[],
   availableAmount: number;
+  history: IHistory[];
 }
 
 export interface ICreateBudgetRequest {

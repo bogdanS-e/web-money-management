@@ -2,6 +2,8 @@ import nextConnect from 'next-connect';
 import middleware from '../../../mongo/database';
 import protectedRoute from '@/mongo/jwtProvider';
 import { IBudget, IRemoveUserFromBudgetRequest } from '@/api/models/user';
+import { IHistory } from '@/api/models/history';
+import MoneyHistory from '@/mongo/moneyHistory';
 
 const handler = nextConnect();
 
@@ -10,12 +12,15 @@ handler.use(protectedRoute);
 
 handler.patch(async (req, res) => {
   try {
-    const {budgetId, email} = req.body as IRemoveUserFromBudgetRequest;
+    const { budgetId, email: emailToDelete } = req.body as IRemoveUserFromBudgetRequest;
 
     //@ts-ignore
-    const budget = await req.db.collection('budgets').findOne({ users: email, id: budgetId }, { projection: { _id: 0 } }) as IBudget;
+    const { email } = req.token;
+    
+    //@ts-ignore
+    const oldBudget = await req.db.collection('budgets').findOne({ users: email, id: budgetId }, { projection: { _id: 0 } }) as IBudget;
 
-    if (!budget) {
+    if (!oldBudget) {
       res.status(404).json({
         message: 'budget was not found',
       });
@@ -23,19 +28,25 @@ handler.patch(async (req, res) => {
       return;
     }
 
-    const index = budget.users.indexOf(email);
+    const index = oldBudget.users.indexOf(emailToDelete);
 
     if (index === -1) {
       throw new Error('no email found');
     }
 
+    const budget = { ...oldBudget };
+    budget.users = [...oldBudget.users];
     budget.users.splice(index, 1);
+
+    const history = new MoneyHistory(oldBudget, budget, email) as IHistory;
+    budget.history.unshift(history);
 
     //@ts-ignore
     await req.db.collection('budgets').updateOne(
       { id: budgetId },
       {
         $set: {
+          history: budget.history,
           users: budget.users,
         }
       },

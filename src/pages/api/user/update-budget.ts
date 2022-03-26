@@ -2,6 +2,8 @@ import nextConnect from 'next-connect';
 import middleware from '../../../mongo/database';
 import protectedRoute from '@/mongo/jwtProvider';
 import { IBudget } from '@/api/models/user';
+import MoneyHistory from '@/mongo/moneyHistory';
+import { IHistory } from '@/api/models/history';
 
 const handler = nextConnect();
 
@@ -27,6 +29,9 @@ handler.patch(async (req, res) => {
     }
 
     const newBudget = { ...budget, ...budgetToUpdate };
+
+    const history = new MoneyHistory(budget, newBudget, email) as IHistory;
+    newBudget.history.unshift(history);
 
     //@ts-ignore
     await req.db.collection('budgets').replaceOne(

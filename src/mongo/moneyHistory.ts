@@ -1,9 +1,8 @@
 import { IHistory, IHistoryData } from "@/api/models/history";
 import { IBudget } from "@/api/models/user";
-import BudgetCard from "@/components/main/BudgetCard";
 
 class MoneyHistory implements IHistory {
-  date: Date;
+  date: string;
   history: IHistoryData[];
   title: string;
 
@@ -16,7 +15,7 @@ class MoneyHistory implements IHistory {
   }
 
   private parseHistory(oldBudget: IBudget | null, newBudget: IBudget, user: string): IHistory {
-    const date = new Date();
+    const date = new Date().toISOString();
     const history: IHistoryData[] = [];
 
     if (!oldBudget) {
@@ -24,9 +23,9 @@ class MoneyHistory implements IHistory {
         date,
         title: `User ${user}:`,
         history: [{
-          title: `created budget ${newBudget.name}`,
+          title: `created budget ${newBudget.name} with amount ${newBudget.amount}`,
           oldValue: '',
-          newValue: BudgetCard.name,
+          newValue: newBudget.name,
         }]
       }
     }
@@ -55,7 +54,7 @@ class MoneyHistory implements IHistory {
 
       if (!oldCategoryObj) {
         history.push({
-          title: 'created the category ' + newCategory.name,
+          title: `created the category ${newCategory.name} with amount ${newCategory.amount}`,
           oldValue: null,
           newValue: null,
         });
@@ -82,7 +81,7 @@ class MoneyHistory implements IHistory {
       }
     });
 
-    newBudget.users.forEach((newUser) => {
+    newBudget.users.forEach((newUser) => {   
       if (!oldBudget.users.find((oldUser) => oldUser === newUser)) {
         history.push({
           title: 'added new user ' + newUser,

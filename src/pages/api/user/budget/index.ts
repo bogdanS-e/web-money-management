@@ -3,6 +3,8 @@ import { v4 as uuid } from 'uuid';
 import middleware from '../../../../mongo/database';
 import protectedRoute from '@/mongo/jwtProvider';
 import { IBudget } from '@/api/models/user';
+import MoneyHistory from '@/mongo/moneyHistory';
+import { IHistory } from '@/api/models/history';
 
 const handler = nextConnect();
 
@@ -25,24 +27,24 @@ handler.post(async (req, res) => {
     const { email } = req.token;
     const id = uuid();
 
-    //@ts-ignore
-    await req.db.collection('budgets').insertOne({
+    const budget: IBudget = {
       users: [email],
       amount,
       availableAmount: amount,
       categories: [],
       name,
       id,
-    });
+      history: [],
+    };
 
-    res.status(200).json({
-      users: [email],
-      amount,
-      availableAmount: amount,
-      categories: [],
-      name,
-      id,
-    });
+    const history = new MoneyHistory(null, budget, email) as IHistory;
+
+    budget.history = [history];
+
+    //@ts-ignore
+    await req.db.collection('budgets').insertOne(budget);
+
+    res.status(200).json(budget);
 
   } catch (e) {
     console.log(e);
@@ -66,9 +68,9 @@ handler.patch(async (req, res) => {
     const { email } = req.token;
 
     //@ts-ignore
-    const budget = await req.db.collection('budgets').findOne({ users: email, id }, { projection: { _id: 0 } }) as IBudget;
+    const oldBudget = await req.db.collection('budgets').findOne({ users: email, id }, { projection: { _id: 0 } }) as IBudget;
 
-    if (!budget) {
+    if (!oldBudget) {
       res.status(404).json({
         message: 'budget was not found',
       });
@@ -76,16 +78,22 @@ handler.patch(async (req, res) => {
       return;
     }
 
+    const budget = { ...oldBudget };
     const difference = budget.amount - amount;
 
     budget.availableAmount = budget.availableAmount - difference;
     budget.amount = amount;
+
+    const history = new MoneyHistory(oldBudget, budget, email) as IHistory;
+
+    budget.history.unshift(history);
 
     //@ts-ignore
     await req.db.collection('budgets').updateOne(
       { users: email, id },
       {
         $set: {
+          history: budget.history,
           amount: budget.amount,
           availableAmount: budget.availableAmount,
         }

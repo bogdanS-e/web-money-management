@@ -3,6 +3,8 @@ import middleware from '../../../mongo/database';
 import protectedRoute from '@/mongo/jwtProvider';
 import { IBudget, IShareBudgetRequest } from '@/api/models/user';
 import emailClient from '@/mongo/emailClient';
+import MoneyHistory from '@/mongo/moneyHistory';
+import { IHistory } from '@/api/models/history';
 
 const handler = nextConnect();
 
@@ -17,9 +19,9 @@ handler.post(async (req, res) => {
     const { email } = req.token;
 
     //@ts-ignore
-    const budget = await req.db.collection('budgets').findOne({ users: email, id }, { projection: { _id: 0 } }) as IBudget;
+    const oldBudget = await req.db.collection('budgets').findOne({ users: email, id }, { projection: { _id: 0 } }) as IBudget;
 
-    if (!budget) {
+    if (!oldBudget) {
       res.status(404).json({
         message: 'budget was not found',
       });
@@ -27,13 +29,19 @@ handler.post(async (req, res) => {
       return;
     }
 
+    const budget = Object.assign({}, oldBudget);
+    budget.users = [...oldBudget.users];
     budget.users.push(...emails);
 
+    const history = new MoneyHistory(oldBudget, budget, email) as IHistory;
+    budget.history.unshift(history);
+    
     //@ts-ignore
     await req.db.collection('budgets').updateOne(
       { id },
       {
         $set: {
+          history: budget.history,
           users: budget.users,
         }
       },

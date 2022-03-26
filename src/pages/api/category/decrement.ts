@@ -3,6 +3,8 @@ import middleware from '../../../mongo/database';
 import protectedRoute from '@/mongo/jwtProvider';
 import { IIncrementCategory } from '@/api/models/category';
 import { IBudget } from '@/api/models/user';
+import MoneyHistory from '@/mongo/moneyHistory';
+import { IHistory } from '@/api/models/history';
 
 const handler = nextConnect();
 
@@ -16,16 +18,17 @@ handler.patch(async (req, res) => {
     const { id, amount, budgetId } = req.body as IIncrementCategory;
 
     //@ts-ignore
-    const budget = await req.db.collection('budgets').findOne({ users: email, id: budgetId }, { projection: { _id: 0 } }) as IBudget;
+    const oldBudget = await req.db.collection('budgets').findOne({ users: email, id: budgetId }, { projection: { _id: 0 } }) as IBudget;
 
-    if (!budget) {
+    if (!oldBudget) {
       res.status(404).json({
         message: 'budget was not found',
       });
 
       return;
     }
-
+    
+    const budget = JSON.parse(JSON.stringify(oldBudget));
     const category = budget.categories.find((category) => category.id === id)
 
     if (!category) {
@@ -39,11 +42,15 @@ handler.patch(async (req, res) => {
     budget.amount = budget.amount - amount;
     category.amount = category.amount! - amount;
 
+    const history = new MoneyHistory(oldBudget, budget, email) as IHistory;
+    budget.history.unshift(history);
+
     // @ts-ignore
     await req.db.collection('budgets').updateOne(
       { users: email, id: budgetId },
       {
         $set: {
+          history: budget.history,
           amount: budget.amount,
           categories: budget.categories,
         },

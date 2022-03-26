@@ -3,6 +3,8 @@ import middleware from '../../../mongo/database';
 import protectedRoute from '@/mongo/jwtProvider';
 import { ISetCategoryRequest } from '@/api/models/category';
 import { IBudget } from '@/api/models/user';
+import MoneyHistory from '@/mongo/moneyHistory';
+import { IHistory } from '@/api/models/history';
 
 const handler = nextConnect();
 
@@ -16,9 +18,9 @@ handler.post(async (req, res) => {
     const { budgetId, categories } = req.body as ISetCategoryRequest;
 
     //@ts-ignore
-    const budget = await req.db.collection('budgets').findOne({ users: email, id: budgetId }, { projection: { _id: 0 } }) as IBudget;
+    const oldBudget = await req.db.collection('budgets').findOne({ users: email, id: budgetId }, { projection: { _id: 0 } }) as IBudget;
 
-    if (!budget) {
+    if (!oldBudget) {
       res.status(404).json({
         message: 'budget was not found',
       });
@@ -26,17 +28,22 @@ handler.post(async (req, res) => {
       return;
     }
 
+    const budget = {...oldBudget};
     const { amount } = budget;
     const categoriesSum = categories.reduce((total, { amount }) => (total || 0) + (amount || 0), 0);
 
     budget.availableAmount = amount - categoriesSum;
     budget.categories = categories;
 
+    const history = new MoneyHistory(oldBudget, budget, email) as IHistory;
+    budget.history.unshift(history);
+
     // @ts-ignore
     await req.db.collection('budgets').updateOne(
       { users: email, id: budgetId },
       {
         $set: {
+          history: budget.history,
           availableAmount: budget.availableAmount,
           categories: budget.categories,
         },

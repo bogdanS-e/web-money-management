@@ -42,7 +42,7 @@ class MoneyHistory implements IHistory {
       if (!newBudget.categories.find((newCategory) => newCategory.id === oldCategory.id)) {
         history.push({
           title: 'deleted the category ' + oldCategory.name,
-          oldValue: null,
+          oldValue: oldCategory.name,
           newValue: null,
         });
       }
@@ -56,7 +56,7 @@ class MoneyHistory implements IHistory {
         history.push({
           title: `created the category ${newCategory.name} with amount ${newCategory.amount}`,
           oldValue: null,
-          newValue: null,
+          newValue: newCategory.name,
         });
 
         return;
@@ -75,7 +75,7 @@ class MoneyHistory implements IHistory {
       if (!newBudget.users.find((newUser) => oldUser === newUser)) {
         history.push({
           title: 'deleted user ' + oldUser,
-          oldValue: null,
+          oldValue: oldUser,
           newValue: null,
         });
       }
@@ -86,7 +86,7 @@ class MoneyHistory implements IHistory {
         history.push({
           title: 'added new user ' + newUser,
           oldValue: null,
-          newValue: null,
+          newValue: newUser,
         });
       }
     });

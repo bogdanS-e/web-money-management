@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { IBudget } from '@/api/models/user';
 import { Avatar, Button, Card, CardContent, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, FormControl, IconButton, TextField, Typography } from '@material-ui/core';
@@ -27,6 +27,7 @@ import theme from '@/styles/theme';
 import DecrementBudgetForm from '../common/decrement-budget-form';
 import IncrementCategoryForm from '../common/increment-category-form';
 import DecrementCategoryForm from '../common/decrement-category-form';
+import BudgetHistory from './BudgetHistory';
 
 interface Props {
   budget: IBudget;
@@ -238,6 +239,12 @@ const BudgetPage: React.FC<Props> = ({ budget }) => {
           </StyledCard>
         </Row>
 
+        <Row>
+          <StyledCard fluid>
+            <BudgetHistory budget={budget} />
+          </StyledCard>
+        </Row>
+
         {userToDelete && (
           <Dialog
             open={showDeleteUser}
@@ -339,7 +346,7 @@ const BudgetPage: React.FC<Props> = ({ budget }) => {
             isShown={showDecrementBudget}
             onClose={handleShowDecrementBudget.disable}
             width='420px'
-            content={<DecrementBudgetForm  budgetId={budget.id} onSubmit={handleShowDecrementBudget.disable} />}
+            content={<DecrementBudgetForm budgetId={budget.id} onSubmit={handleShowDecrementBudget.disable} />}
           />
         )}
 
@@ -389,7 +396,7 @@ const StyledTextField = styled(TextField)`
   
 `;
 
-const StyledCard = styled(Card)`
+const StyledCard = styled(Card) <{ fluid?: boolean }>`
   width: calc(50% - 7px);
   box-shadow: 0px 2px 9px -1px rgb(0 0 0 / 20%), 0px 4px 4px 0px rgb(0 0 0 / 14%), 0px 1px 3px 1px rgb(0 0 0 / 12%);
   border-radius: 10px;
@@ -402,6 +409,19 @@ const StyledCard = styled(Card)`
   &:nth-of-type(even) {
     margin-left: 7px;
   }
+
+  ${({ fluid }) => fluid && css`
+    margin: 0;
+    width: 100%;
+
+    &:nth-of-type(odd) {
+      margin-right: 0;
+    }
+  
+    &:nth-of-type(even) {
+      margin-left: 0;
+    }
+  `};
 `;
 
 const StyledDivider = styled(Divider)`

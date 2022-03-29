@@ -17,3 +17,9 @@ export const selectUserBudgets = () => (state: RootState) => {
 
   return state.user.user.budgets;
 };
+
+export const selectUserMoneyBoxes = () => (state: RootState) => {
+  if (!state.user.user) return [];
+
+  return state.user.user.moneyBoxes;
+};

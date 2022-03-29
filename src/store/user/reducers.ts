@@ -1,7 +1,7 @@
 import produce from 'immer';
 
 import {
-  UserActionTypes, IUserState, SET_USER, ADD_BUDGET, UPDATE_BUDGET, UPDATE_USER, DELETE_BUDGET
+  UserActionTypes, IUserState, SET_USER, ADD_BUDGET, UPDATE_BUDGET, UPDATE_USER, DELETE_BUDGET, ADD_MMONEY_BOX, DELETE_MONEY_BOX, UPDATE_BOX
 } from './types';
 
 const initialState: IUserState = { user: null };
@@ -28,6 +28,11 @@ export const userReducer = (
 
         draft.user.budgets.push(action.payload.budget);
         break;
+      case ADD_MMONEY_BOX:
+        if (!draft.user) return;
+
+        draft.user.moneyBoxes.push(action.payload.moneyBox);
+        break;
       case DELETE_BUDGET:
         if (!draft.user) return;
 
@@ -35,6 +40,15 @@ export const userReducer = (
 
         if (indexToDelete !== -1) {
           draft.user.budgets.splice(indexToDelete, 1);
+        }
+        break;
+      case DELETE_MONEY_BOX:
+        if (!draft.user) return;
+
+        const indexToDeleteBox = draft.user.moneyBoxes.findIndex((box) => box.id === action.payload.id);
+
+        if (indexToDeleteBox !== -1) {
+          draft.user.moneyBoxes.splice(indexToDeleteBox, 1);
         }
         break;
       case UPDATE_BUDGET:
@@ -46,6 +60,18 @@ export const userReducer = (
 
         draft.user.budgets[index] = {
           ...draft.user.budgets[index],
+          ...action.payload,
+        };
+        break;
+      case UPDATE_BOX:
+        if (!draft.user) return;
+
+        const indexBox = draft.user.moneyBoxes.findIndex(({ id }) => id === action.payload.id);
+
+        if (indexBox === -1) return;
+
+        draft.user.moneyBoxes[indexBox] = {
+          ...draft.user.moneyBoxes[indexBox],
           ...action.payload,
         };
         break;

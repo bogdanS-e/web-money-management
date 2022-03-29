@@ -6,6 +6,7 @@ export interface IUser {
   name: string;
   onboarded: boolean;
   budgets: IBudget[];
+  moneyBoxes: IMoneyBox[];
 }
 
 export interface ISignInRequest {
@@ -42,9 +43,25 @@ export interface IBudget {
   history: IHistory[];
 }
 
+export interface IMoneyBox {
+  id: string;
+  users: [string],
+  name: string;
+  goal: number;
+  goalDate: string;
+  actualAmount: number;
+  startDate: string;
+  editDate: string;
+}
 export interface ICreateBudgetRequest {
   name: string;
   amount: number;
+}
+
+export interface ICreateMoneyBoxRequest {
+  name: string;
+  goal: number;
+  date: string;
 }
 
 export interface IShareBudgetRequest {

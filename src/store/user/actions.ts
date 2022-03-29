@@ -1,5 +1,5 @@
-import { IBudget, IUser } from '@/api/models/user';
-import { UserActionTypes, SET_USER, ADD_BUDGET, UPDATE_BUDGET, UPDATE_USER, DELETE_BUDGET } from './types';
+import { IBudget, IMoneyBox, IUser } from '@/api/models/user';
+import { UserActionTypes, SET_USER, ADD_BUDGET, UPDATE_BUDGET, UPDATE_USER, DELETE_BUDGET, ADD_MMONEY_BOX, DELETE_MONEY_BOX, UPDATE_BOX } from './types';
 
 export function setUser(user: IUser | null): UserActionTypes {
   return {
@@ -28,9 +28,27 @@ export function addBudget(budget: IBudget): UserActionTypes {
   };
 }
 
+export function addMoneyBoxA(moneyBox: IMoneyBox): UserActionTypes {
+  return {
+    type: ADD_MMONEY_BOX,
+    payload: {
+      moneyBox,
+    }
+  };
+}
+
 export function deleteBudget(id: string): UserActionTypes {
   return {
     type: DELETE_BUDGET,
+    payload: {
+      id,
+    }
+  };
+}
+
+export function deleteMoneyBoxA(id: string): UserActionTypes {
+  return {
+    type: DELETE_MONEY_BOX,
     payload: {
       id,
     }
@@ -42,6 +60,15 @@ export function updateBudget(budget: Partial<IBudget>): UserActionTypes {
     type: UPDATE_BUDGET,
     payload: {
       ...budget,
+    }
+  };
+}
+
+export function updateBox(box: Partial<IMoneyBox>): UserActionTypes {
+  return {
+    type: UPDATE_BOX,
+    payload: {
+      ...box,
     }
   };
 }

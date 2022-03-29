@@ -28,12 +28,15 @@ handler.get(async (req, res) => {
 
     //@ts-ignore
     const budgets = await req.db.collection('budgets').find({ users: userEmail }, { projection: { _id: 0 } }).toArray();
+    //@ts-ignore
+    const moneyBoxes = await req.db.collection('money-boxes').find({ users: userEmail }, { projection: { _id: 0 } }).toArray();
 
     res.status(200).json({
       name,
       onboarded,
       email: userEmail,
       budgets,
+      moneyBoxes,
     });
 
   } catch (e) {

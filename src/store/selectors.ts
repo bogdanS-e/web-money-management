@@ -18,6 +18,12 @@ export const selectUserBudgets = () => (state: RootState) => {
   return state.user.user.budgets;
 };
 
+export const selectUserMoneyBox = (boxId: string) => (state: RootState) => {
+  if (!state.user.user) return null;
+
+  return state.user.user.moneyBoxes.find(({ id }) => id === boxId) || null;
+};
+
 export const selectUserMoneyBoxes = () => (state: RootState) => {
   if (!state.user.user) return [];
 

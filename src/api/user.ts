@@ -33,12 +33,20 @@ export const updateBudget = (budget: Partial<IBudget> & { id: string }) => {
   return instance.patch<IBudget>(`/user/update-budget/`, budget);
 };
 
+export const updateBox = (budget: Partial<IMoneyBox> & { id: string }) => {
+  return instance.patch<IMoneyBox>(`/user/update-box/`, budget);
+};
+
 export const editBudgetAmountById = (id: string, amount: number) => {
   return instance.patch<IBudget>(`/user/budget/`, { id, amount });
 };
 
 export const deleteUserFromBudget = (data: IRemoveUserFromBudgetRequest) => {
   return instance.patch<IBudget>(`/user/remove-from-budget/`, data);
+};
+
+export const deleteUserFromBox = (data: IRemoveUserFromBudgetRequest) => {
+  return instance.patch<IBudget>(`/user/remove-from-box/`, data);
 };
 
 export const deleteBudget = (id: string) => {

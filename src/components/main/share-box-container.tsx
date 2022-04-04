@@ -1,5 +1,5 @@
-import { IBudget, IMoneyBox } from '@/api/models/user';
-import { shareBox, shareBudget } from '@/api/user';
+import { IMoneyBox } from '@/api/models/user';
+import { shareBox } from '@/api/user';
 import storage from '@/services/local-storage-handlers';
 import useLocalStorage from '@/services/local-storage-handlers/use-local-storage';
 import { updateBox, updateBudget } from '@/store/user/actions';

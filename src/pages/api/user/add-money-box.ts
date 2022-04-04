@@ -30,12 +30,12 @@ handler.post(async (req, res) => {
     const box: IMoneyBox = {
       users: [email],
       goal,
-      editDate: editDate.toISOString(),
       startDate: editDate.toISOString(),
       goalDate: goalDate.toISOString(),
       actualAmount: 0,
       name,
       id,
+      completed: false,
     };
 
     //@ts-ignore

@@ -51,7 +51,7 @@ export interface IMoneyBox {
   goalDate: string;
   actualAmount: number;
   startDate: string;
-  editDate: string;
+  completed: boolean;
 }
 export interface ICreateBudgetRequest {
   name: string;
@@ -72,5 +72,10 @@ export interface IShareBudgetRequest {
 
 export interface IRemoveUserFromBudgetRequest {
   budgetId: string;
+  email: string;
+}
+
+export interface IRemoveUserFromBoxRequest {
+  boxId: string;
   email: string;
 }

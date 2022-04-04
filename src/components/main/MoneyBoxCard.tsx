@@ -1,27 +1,20 @@
-import { setCategories } from "@/api/category";
-import { ICreateCategory } from "@/api/models/category";
-import { IBudget, IMoneyBox } from "@/api/models/user";
-import { deleteBox, deleteBudget } from "@/api/user";
+import { IMoneyBox } from "@/api/models/user";
+import { deleteBox } from "@/api/user";
 import { selectUser } from "@/store/selectors";
-import { updateBudget, deleteBudget as deleteBudgetAction, deleteMoneyBoxA } from "@/store/user/actions";
+import { deleteMoneyBoxA } from "@/store/user/actions";
 import { Row } from "@/styles/layout";
 import { useRequest } from "@/utils/hooks/useRequest";
 import useToggle from "@/utils/hooks/useToggle";
 import { stringAvatar } from "@/utils/maping";
-import { Avatar, Button, Card, CardActions, CardContent, Collapse, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, IconButton, Typography } from "@material-ui/core";
+import { Avatar, Button, Card, CardActions, CardContent, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, IconButton, Typography } from "@material-ui/core";
 import moment from "moment";
 import { useRouter } from "next/router";
-import { CaretDown, PencilSimple, ShareNetwork, TrashSimple } from "phosphor-react";
-import React, { Fragment, useState } from "react";
+import { PencilSimple, ShareNetwork, TrashSimple } from "phosphor-react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import AvatarGroup from "../common/avatar-group";
-import CategoryForm, { MappedIcon } from "../common/category-form";
-import Modal from "../common/modal";
-import TextButton from "../common/TextButton";
-import UpdateBudgetForm from "../common/update-budget-form";
 import ShareBoxContainer from "./share-box-container";
-import ShareBudgetContainer from "./share-video-container";
 
 interface Props {
   moneyBox: IMoneyBox;
@@ -32,7 +25,7 @@ const MoneyBoxCard: React.FC<Props> = ({
   moneyBox,
   className,
 }) => {
-  const { name, id, users, goal, actualAmount, startDate, goalDate } = moneyBox;
+  const { name, id, users, goal, actualAmount, goalDate } = moneyBox;
   const dispatch = useDispatch();
   const router = useRouter();
 
@@ -57,7 +50,7 @@ const MoneyBoxCard: React.FC<Props> = ({
 
   return (
     <StyledCard
-      //onClick={() => router.push(`/budget/${id}`, undefined, { shallow: true })}
+      onClick={() => router.push(`/money-box/${id}`, undefined, { shallow: true })}
       className={className}
     >
       <CardContent>
@@ -98,9 +91,6 @@ const MoneyBoxCard: React.FC<Props> = ({
         >
           <ShareNetwork size={24} />
         </ShareButton>
-        <ShareButton>
-          <PencilSimple size={24} />
-        </ShareButton>
         <ShareButton onClick={(e) => {
           e.stopPropagation();
           handleShowDeleteBox.enable();
@@ -117,7 +107,7 @@ const MoneyBoxCard: React.FC<Props> = ({
           selectedBox={moneyBox}
         />
       )}
-      
+
       {showDeleteBox && (
         <Dialog
           open={showDeleteBox}

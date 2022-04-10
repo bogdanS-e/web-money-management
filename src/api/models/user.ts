@@ -52,6 +52,7 @@ export interface IMoneyBox {
   actualAmount: number;
   startDate: string;
   completed: boolean;
+  image: string | null;
 }
 export interface ICreateBudgetRequest {
   name: string;

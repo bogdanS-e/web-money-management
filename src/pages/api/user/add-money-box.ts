@@ -36,6 +36,7 @@ handler.post(async (req, res) => {
       name,
       id,
       completed: false,
+      image: null,
     };
 
     //@ts-ignore

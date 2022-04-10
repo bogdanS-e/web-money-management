@@ -1,8 +1,8 @@
 import styled, { css } from 'styled-components';
 
-import { IBudget, IMoneyBox } from '@/api/models/user';
+import { IMoneyBox } from '@/api/models/user';
 import { Avatar, Box, Button, Card, CardContent, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, FormControl, IconButton, LinearProgress, LinearProgressProps, TextField, Typography } from '@material-ui/core';
-import React, { Fragment, useMemo, useState } from 'react';
+import React, { ChangeEvent, Fragment, useMemo, useState } from 'react';
 
 
 import Header from '../common/Header';
@@ -12,7 +12,7 @@ import Modal from '../common/modal';
 import TextButton from '../common/TextButton';
 import { Column, Row } from '@/styles/layout';
 import { useRequest } from '@/utils/hooks/useRequest';
-import { deleteBox, deleteUserFromBox, deleteUserFromBudget, updateBox as updateBoxApi } from '@/api/user';
+import { deleteBox, deleteUserFromBox, updateBox as updateBoxApi } from '@/api/user';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteMoneyBoxA, updateBox, updateBudget } from '@/store/user/actions';
 import CategoryForm, { MappedIcon } from '../common/category-form';
@@ -30,6 +30,7 @@ import IncrementBoxGoalForm from '../common/increment-box-goal-form';
 import IncrementBoxAmountForm from '../common/increment-box-amount';
 import DecrementBoxAmountForm from '../common/decrement-box-amount';
 import ChangeBoxDateForm from '../common/change-box-date-form';
+import getBase64 from '@/utils/getBase64';
 
 interface Props {
   moneyBox: IMoneyBox
@@ -51,7 +52,7 @@ function LinearProgressWithLabel(props: LinearProgressProps & { value: number })
 }
 
 const MoneyBoxPage: React.FC<Props> = ({ moneyBox }) => {
-  const { name, id, users, goal, actualAmount, goalDate, completed } = moneyBox;
+  const { name, id, users, goal, actualAmount, goalDate, completed, image } = moneyBox;
 
   const dispatch = useDispatch();
   const router = useRouter();
@@ -125,10 +126,20 @@ const MoneyBoxPage: React.FC<Props> = ({ moneyBox }) => {
     deleteBoxRequest.fetch(id);
   };
 
+  const handleChangeImage = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+
+    if (!file) return;
+
+    getBase64(file, (base64) => {
+      updateBudgetRequest.fetch({ id: id, image: base64 });
+    })
+  }
+
   return (
     <>
       <Header />
-      <Container>
+      <StyledContainer>
         <br />
         <Button
           color='primary'
@@ -138,119 +149,173 @@ const MoneyBoxPage: React.FC<Props> = ({ moneyBox }) => {
           <ArrowLeft size={18} />
           Go back
         </Button>
-        <ProgressWrapper>
-          <Typography
-            variant='h6'
-            component='div'
-          >
-            Your progress:
 
-          </Typography>
-          <LinearProgressWithLabel value={progress} />
-        </ProgressWrapper>
-
-        <Row vertical='stretch' horizontal='spaced-between'>
-          <div>
-            <Title>
-              <Typography
-                variant='h3'
-                component='h1'
-              >
-                {moneyBox.name}
-                <ShareButton onClick={handleShowEditName.enable}>
-                  <PencilSimple size={24} />
-                </ShareButton>
-              </Typography>
-            </Title>
-
-            <Typography variant="h5">
-              <div>
-                <Sub>
-                  Your goal:
-                </Sub>
-                <CategoryAmount variant="h4">
-                  {goal}
-                  <ShareButton disabled={completed} onClick={handleShowIncrementGoal.enable}>
-                    <PencilSimple size={24} />
-                  </ShareButton>
-                </CategoryAmount>
-              </div>
-              <div>
-                <Sub>
-                  You added:
-                </Sub>
-                <CategoryAmount variant="h4">
-                  {actualAmount}
-                  <PlusAction disabled={completed} onClick={handleShowIncrement.enable}>
-                    <Plus size={18} />
-                  </PlusAction>
-                  <MinusAction disabled={completed} onClick={handleShowDecrement.enable}>
-                    <Minus size={18} />
-                  </MinusAction>
-                </CategoryAmount>
-              </div>
-              <div>
-                <Sub>
-                  Time left:
-                </Sub>
-                <CategoryAmount variant="h4">
-                  {moment(goalDate).fromNow(true)} ({daysLeft} days)
-
-                  <ShareButton disabled={completed} onClick={handleShowChangeDate.enable}>
-                    <PencilSimple size={24} />
-                  </ShareButton>
-                </CategoryAmount>
-              </div>
-              <div>
-                <Sub>
-                  You need to add:
-                </Sub>
-                <CategoryAmount variant="h4">
-                  {addPerDay}
-                </CategoryAmount>
-              </div>
+        {completed && (
+          <>
+            <Typography
+              variant='h4'
+              component='h4'
+              align='center'
+            >
+              Nice, you have already collected final sum! <Emoji>🎉</Emoji>
             </Typography>
-          </div>
+            <Column>
+              <Typography
+                variant='h6'
+                component='h6'
+                align='center'
+              >
+                Now you can delete the money box
+              </Typography>
+              <Button
+                color='secondary'
+                variant='contained'
+                onClick={handleShowDeleteBox.enable}
+              >
+                Delete
+              </Button>
+            </Column>
+          </>
+        )}
 
-          <StyledCard>
-            <CardContent>
-              <CategoryItem horizontal="start">
-                <Typography variant="h6">
-                  Users
+        <Column horizontal='start' vertical='start' style={{ height: 'calc(100vh - 100px)' }}>
+          <StyledRow>
+            <ProgressWrapper>
+              <Typography
+                variant='h6'
+                component='div'
+              >
+                Your progress:
+
+              </Typography>
+              <LinearProgressWithLabel value={progress} />
+            </ProgressWrapper>
+
+            <Row vertical='stretch' horizontal='spaced-between'>
+              <div>
+                <Title>
+                  <Typography
+                    variant='h3'
+                    component='h1'
+                  >
+                    {moneyBox.name}
+                    <ShareButton onClick={handleShowEditName.enable}>
+                      <PencilSimple size={24} />
+                    </ShareButton>
+                  </Typography>
+                </Title>
+
+                <Typography variant="h5">
+                  <div>
+                    <Sub>
+                      Your goal:
+                    </Sub>
+                    <CategoryAmount variant="h4">
+                      {goal}
+                      <ShareButton disabled={completed} onClick={handleShowIncrementGoal.enable}>
+                        <PencilSimple size={24} />
+                      </ShareButton>
+                    </CategoryAmount>
+                  </div>
+                  <div>
+                    <Sub>
+                      You added:
+                    </Sub>
+                    <CategoryAmount variant="h4">
+                      {actualAmount}
+                      <PlusAction disabled={completed} onClick={handleShowIncrement.enable}>
+                        <Plus size={18} />
+                      </PlusAction>
+                      <MinusAction disabled={completed} onClick={handleShowDecrement.enable}>
+                        <Minus size={18} />
+                      </MinusAction>
+                    </CategoryAmount>
+                  </div>
+                  <div>
+                    <Sub>
+                      Time left:
+                    </Sub>
+                    <CategoryAmount variant="h4">
+                      {moment(goalDate).fromNow(true)} ({daysLeft} days)
+
+                      <ShareButton disabled={completed} onClick={handleShowChangeDate.enable}>
+                        <PencilSimple size={24} />
+                      </ShareButton>
+                    </CategoryAmount>
+                  </div>
+                  <div>
+                    <Sub>
+                      You need to add:
+                    </Sub>
+                    <CategoryAmount variant="h4">
+                      {addPerDay}
+                    </CategoryAmount>
+                  </div>
+                  <Button
+                    variant="contained"
+                    component="label"
+                    color='primary'
+                  >
+                    {image ? 'Change image' : 'Add image'}
+
+                    <input
+                      onChange={handleChangeImage}
+                      type="file"
+                      accept="image/png, image/gif, image/jpeg"
+                      hidden
+                    />
+                  </Button>
                 </Typography>
-              </CategoryItem>
-              <StyledDivider />
-              {users.map((email) => (
-                <Fragment key={email}>
+              </div>
+
+              <StyledCard>
+                <CardContent>
                   <CategoryItem horizontal="start">
-                    <StyledAvatar {...stringAvatar(email)} />
-                    <Typography variant="subtitle1">
-                      {email}
+                    <Typography variant="h6">
+                      Users
                     </Typography>
-                    {(user && user.email === email) ? (
-                      <DeleteUser disabled>
-                        You
-                      </DeleteUser>
-                    ) : (
-                      <DeleteUser onClick={() => handleShowDeleteUser.set(true, email)}>
-                        <TrashSimple size={18} />
-                      </DeleteUser>
-                    )}
                   </CategoryItem>
                   <StyledDivider />
-                </Fragment>
-              ))}
-              <br />
-              <Button
-                color='primary'
-                variant='contained'
-                onClick={handleShowShareBudget.enable}
-              >
-                Add new
-              </Button>
-            </CardContent>
-          </StyledCard>
-        </Row>
+                  {users.map((email) => (
+                    <Fragment key={email}>
+                      <CategoryItem horizontal="start">
+                        <StyledAvatar {...stringAvatar(email)} />
+                        <Typography variant="subtitle1">
+                          {email}
+                        </Typography>
+                        {(user && user.email === email) ? (
+                          <DeleteUser disabled>
+                            You
+                          </DeleteUser>
+                        ) : (
+                          <DeleteUser onClick={() => handleShowDeleteUser.set(true, email)}>
+                            <TrashSimple size={18} />
+                          </DeleteUser>
+                        )}
+                      </CategoryItem>
+                      <StyledDivider />
+                    </Fragment>
+                  ))}
+                  <br />
+                  <Button
+                    color='primary'
+                    variant='contained'
+                    onClick={handleShowShareBudget.enable}
+                  >
+                    Add new
+                  </Button>
+                </CardContent>
+              </StyledCard>
+            </Row>
+          </StyledRow>
+          <StyledRow>
+            {image && (
+              <ImageWrapper>
+                <Image src={image} />
+              </ImageWrapper>
+            )}
+          </StyledRow>
+        </Column>
 
         {showEditName && (
           <Modal
@@ -285,34 +350,6 @@ const MoneyBoxPage: React.FC<Props> = ({ moneyBox }) => {
               </Column>
             )}
           />
-        )}
-
-        {completed && (
-          <>
-            <Typography
-              variant='h4'
-              component='h4'
-              align='center'
-            >
-              Nice, you have already collected final sum! <Emoji>🎉</Emoji>
-            </Typography>
-            <Column>
-              <Typography
-                variant='h6'
-                component='h6'
-                align='center'
-              >
-                Now you can delete the money box
-              </Typography>
-              <Button
-                color='secondary'
-                variant='contained'
-                onClick={handleShowDeleteBox.enable}
-              >
-                Delete
-              </Button>
-            </Column>
-          </>
         )}
 
         {showDeleteBox && (
@@ -413,7 +450,7 @@ const MoneyBoxPage: React.FC<Props> = ({ moneyBox }) => {
             </DialogActions>
           </Dialog>
         )}
-      </Container>
+      </StyledContainer>
     </>
   );
 };
@@ -422,6 +459,31 @@ export default MoneyBoxPage;
 
 const StyledAvatar = styled(Avatar)`
   margin-right: 8px;
+`;
+
+const StyledRow = styled.div`
+  width: 100%;
+  height: 50%;
+`;
+
+const ImageWrapper = styled.div`
+  height: 100%;
+`;
+
+const Image = styled.div<{ src: string }>`
+  ${({ src }) => src && css`
+    width: 100%;
+    height: 100%;
+    background: url(${src}) no-repeat center;
+    background-size: contain;
+    margin-bottom: 10px;
+    border-radius: 15px;
+  `};
+`;
+
+const StyledContainer = styled(Container)`
+  max-height: calc(100vh - 60px);
+  overflow: hidden;
 `;
 
 const Title = styled.div`

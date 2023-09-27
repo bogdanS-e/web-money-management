@@ -16,7 +16,7 @@ import CategoryForm from "../common/category-form";
 import Modal from "../common/modal";
 import BudgetCard from "./BudgetCard";
 import TextButton from '@/components/common/TextButton';
-import MoneyHistory from "@/mongo/moneyHistory";
+import { generateLinkToTelegram as generateLinkToTelegramRequest } from "@/api/telegram";
 
 interface Props {
 }
@@ -29,6 +29,12 @@ const CardsContainer: React.FC<Props> = () => {
   const [selectedBudget, setSelectedBudget] = useState<IBudget | null>(null);
 
   const dispatch = useDispatch();
+
+  const generateLinkToTelegramRequestHanlder = useRequest(generateLinkToTelegramRequest, {
+    onSuccess: ({link}) => {
+      location.href = link;      
+    }
+  });
 
   const budgetForm = useForm(
     {
@@ -76,6 +82,10 @@ const CardsContainer: React.FC<Props> = () => {
     setCategoriesRequest.fetch({ budgetId, categories })
   };
 
+  const generateLinkToTelegram = () => {
+    generateLinkToTelegramRequestHanlder.fetch();
+  };
+
   return (
     <StyledContainer>
       <Row horizontal="start" vertical="start" wrapped>
@@ -91,6 +101,15 @@ const CardsContainer: React.FC<Props> = () => {
         >
           Add new budget
         </Button>
+        <div>
+          <Button
+            variant='contained'
+            color='secondary'
+            onClick={generateLinkToTelegram}
+          >
+            Connect to Telegram Bot
+          </Button>
+        </div>
       </AddBudgetButton>
 
       {showAddBudget && (

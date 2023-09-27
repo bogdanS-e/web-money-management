@@ -1,5 +1,3 @@
-import { ICreateCategory } from "./category";
-
 export interface IHistoryData {
   title: string;
   oldValue: string | number | null;

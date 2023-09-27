@@ -32,7 +32,7 @@ const Home: React.FC<Props> = () => {
     onError: () => {
       dispatch(loginFail());
     },
-  })
+  });
 
   useEffect(() => {
     if (isLoggedIn === null) return;

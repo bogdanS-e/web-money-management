@@ -7,6 +7,8 @@ export interface IUser {
   onboarded: boolean;
   budgets: IBudget[];
   moneyBoxes: IMoneyBox[];
+  chatId?: string;
+  _id: string;
 }
 
 export interface ISignInRequest {

@@ -18,11 +18,24 @@ export function getTokenPair(data: object): IUserTokens {
   }
 };
 
-function protectedRoute(req: IncomingMessage, res: ServerResponse, next: NextHandler) {
+async function protectedRoute(req: IncomingMessage, res: ServerResponse, next: NextHandler) {
   const token = req.headers.authorization;
 
   if (!token) {
     res.status(401).send('');
+    return;
+  }
+
+  const [email, chatId] = token.split('|');
+  //@ts-ignore
+  const user = await req.db.collection('users').findOne({ chatId: +chatId });
+  const isTelegram = !!user;
+
+  if (isTelegram) {
+    //@ts-ignore
+    req.token = {email};
+
+    next();
     return;
   }
 

@@ -16,6 +16,8 @@ handler.patch(async (req, res) => {
 
     //@ts-ignore
     const { email } = req.token;
+    //@ts-ignore
+    const app = req.app;
 
     //@ts-ignore
     const budget = await req.db.collection('budgets').findOne({ users: email, id: budgetToUpdate.id }, { projection: { _id: 0 } }) as IBudget;
@@ -36,7 +38,7 @@ handler.patch(async (req, res) => {
     //@ts-ignore
     await req.db.collection('budgets').replaceOne(
       { users: email, id: newBudget.id },
-      { ...newBudget },
+      { ...newBudget, app },
     );
 
     res.status(200).json(newBudget);

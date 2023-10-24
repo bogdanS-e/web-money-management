@@ -17,6 +17,8 @@ handler.post(async (req, res) => {
 
     //@ts-ignore
     const { email } = req.token;
+    //@ts-ignore
+    const app = req.app;
 
     //@ts-ignore
     const oldBudget = await req.db.collection('budgets').findOne({ users: email, id }, { projection: { _id: 0 } }) as IBudget;
@@ -43,6 +45,7 @@ handler.post(async (req, res) => {
         $set: {
           history: budget.history,
           users: budget.users,
+          app,
         }
       },
     );

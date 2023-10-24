@@ -15,6 +15,8 @@ handler.post(async (req, res) => {
   try {
     //@ts-ignore
     const { email } = req.token;
+    //@ts-ignore
+    const app = req.app;
     const { budgetId, categories } = req.body as ISetCategoryRequest;
 
     //@ts-ignore
@@ -46,6 +48,7 @@ handler.post(async (req, res) => {
           history: budget.history,
           availableAmount: budget.availableAmount,
           categories: budget.categories,
+          app
         },
         $unset: { code: '' },
       },

@@ -15,6 +15,9 @@ handler.patch(async (req, res) => {
   try {
     //@ts-ignore
     const { email } = req.token;
+    //@ts-ignore
+    const app = req.app;
+    
     const { id, amount, budgetId } = req.body as IIncrementCategory;
 
     //@ts-ignore
@@ -53,6 +56,7 @@ handler.patch(async (req, res) => {
           history: budget.history,
           availableAmount: budget.availableAmount,
           categories: budget.categories,
+          app,
         },
         $unset: { code: '' },
       },

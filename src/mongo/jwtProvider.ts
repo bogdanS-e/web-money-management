@@ -34,7 +34,9 @@ async function protectedRoute(req: IncomingMessage, res: ServerResponse, next: N
   if (isTelegram) {
     //@ts-ignore
     req.token = {email};
-
+    //@ts-ignore
+    req.app = 'telegram';
+    
     next();
     return;
   }
@@ -47,6 +49,8 @@ async function protectedRoute(req: IncomingMessage, res: ServerResponse, next: N
 
     //@ts-ignore
     req.token = email;
+    //@ts-ignore
+    req.app = 'web';
 
     next();
   });
